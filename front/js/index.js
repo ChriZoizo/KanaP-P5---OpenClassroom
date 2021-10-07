@@ -42,23 +42,10 @@ function populateIndexWithProducts(object, index) {
   newArticle.appendChild(newImg);
   newArticle.appendChild(newH3);
   newArticle.appendChild(newP);
-
-  //----------------------------------
-  // ALTERNATIVE avec INNERHTML ?
 }
 
-
-
   // Lance la boucle pour peuplé l'index avec les produits lorsque la page est charger
-
 // A FAIRE !
-
-
-
-
-
-
-
 
 // FONCTION TEST
 

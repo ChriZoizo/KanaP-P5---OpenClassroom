@@ -19,7 +19,10 @@ function getProductsFromApi(url) {
       console.log(value);
       console.log("values a the top of this is for step 2 fetching");
       listOfProducts = value
+      console.log(listOfProducts)
       displayOneProduct(listOfProducts.find(el => el._id == id))
+      let product = value
+
       return value;
     })
     .catch(function (err) {
@@ -60,7 +63,7 @@ function displayOneProduct(object) {
     
     let colorArray = object.colors
 
-    //BOUCLE FOR ... OF ??????
+
     for (i = 0; i < (object.colors.length); i ++){
         let thisColor = object.colors[i]
         let colorOption = document.createElement('option')
@@ -68,8 +71,19 @@ function displayOneProduct(object) {
         colorOption.innerText = thisColor
         colorSelector.appendChild(colorOption)
     }
+    testing(object)
 
 }
+
+
+function testing(arr) {
+  let objectToSave = JSON.stringify(arr)
+  localStorage.setItem("productInCart", objectToSave)
+  let display = localStorage.getItem("productInCart")
+  let displayed = JSON.parse(display)
+  console.log(displayed)
+}
+
 
 // Event Listener sur le bouton  addToCart pour l'ajout au panier
 let addToCartButton = document.getElementById('addToCart')
@@ -77,6 +91,6 @@ addToCartButton.addEventListener('click', addToCart)
 
 function addToCart(){
   console.log("added to cart")
-  getOneProduct(id)
+
 }
 
