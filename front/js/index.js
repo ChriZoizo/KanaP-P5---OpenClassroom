@@ -53,10 +53,6 @@ function populateIndexWithProducts(object, index) {
 
 // A FAIRE !
 
-var url = new URL(apiURL)
-var g = url.searchParams("_id")
-console.log("g")
-
 
 
 
