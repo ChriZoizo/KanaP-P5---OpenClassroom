@@ -1,37 +1,17 @@
 /* Ne pas oublier de generer l'url de l'API selon le choix su produit (pour que les url soit lisibe je pense)*/
+// Imports
+import * as monScript from "./script.js";
 
 //Declaration de l'URL de l'api
 const apiURL = "http://localhost:3000/api/products/";
-const currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-const productURLFirstPart = new URL(currentURL.replace("index.html", "product.html"))
-apiList = getProductsFromApi(apiURL);
 
-// Fonction permettant le fetch de l'api puis envoie le resultat a la fonction "loop()"
-function getProductsFromApi(url) {
-  fetch(url)
-    .then(function (res) {
-      if (res.ok) {
-          console.log("fetch step 1")
-        console.log(res);
-        return res.json();
-      }
-    })
-    .then(function (value) {
-      console.log("fetch step 2 ^ data a the top of this");
-      console.log(value);
-      loop(value)
-      return value;
-    })
-    .catch(function (err) {
-        console.log("ERROR WITH API FETCHING. LOOK BOTTOM")
-      console.log(err);
-    });
-}
-
+const listOfProducts = await monScript.getProductsFromApi(apiURL);
+console.log(listOfProducts)
+loop(listOfProducts)
 
 
 // Fonction pour boucler la fonction de population (populateIndexWithProducts()) sur un array
-function loop(list){
+async function loop(list){
     for (let i = 0; i < list.length; i++) {
         populateIndexWithProducts(list[i], i);
       }
@@ -40,14 +20,11 @@ function loop(list){
 
   // Fonction pour peupler l'index avec les produits de l'API 
 function populateIndexWithProducts(object, index) {
-  let id = object._id
-  console.log(id.toString())
-  let link = productURLFirstPart + '?id=' + id       //.searchParams.append("id:", id)
     //Console.log pour check A ENLEVER
   console.log(object.name);
   // Creation des elements et ajouts des attributs et/ou du contenus
   let newLink = document.createElement("a");
-  newLink.setAttribute("href", link);
+  newLink.setAttribute("href", "#"); /*  ATTRIBUT A REGLER */
   let newArticle = document.createElement("article");
   let newImg = document.createElement("img");
   newImg.setAttribute("src", object.imageUrl);
@@ -76,6 +53,11 @@ function populateIndexWithProducts(object, index) {
 
 // A FAIRE !
 
+var url = new URL(apiURL)
+var g = url.searchParams("_id")
+console.log("g")
+
+
 
 
 
@@ -95,6 +77,4 @@ function prime() {
   console.log("prime");
   console.log(apiList)
 }
-
-
 
