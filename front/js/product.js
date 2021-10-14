@@ -51,7 +51,7 @@ function displayOneProduct(object) {
   const descriptionContainer = document.getElementById("description");
   descriptionContainer.innerText = object.description;
   const colorSelector = document.getElementById("colors");
-  // Boucle sur l'array contenant les couleurs pour les afficher dans le selecteur
+  // Boucle sur l'element array "colors" contenant les couleurs pour les afficher dans le selecteur
   for (i = 0; i < object.colors.length; i++) {
     let thisColor = object.colors[i];
     let colorOption = document.createElement("option");
