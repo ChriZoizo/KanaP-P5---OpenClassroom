@@ -1,36 +1,37 @@
-/* Ne pas oublier de generer l'url de l'API selon le choix su produit (pour que les url soit lisibe je pense)*/
-
 //Declaration de l'URL de l'api
 const apiURL = "http://localhost:3000/api/products/";
+// Declaration d'une variable contenant l'URL actuelle
 const currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+// Creation de la base de l'url qui servira au peuplé les liens des produits
 const productURLFirstPart = new URL(currentURL.replace("index.html", "product.html"))
 apiList = getProductsFromApi(apiURL);
 
-// Fonction permettant le fetch de l'api puis envoie le resultat a la fonction "loop()"
+
+// Fonction permettant le fetch de l'api puis appel la fonction "loop()" en lui passant le resultat du fetch en parametre
 function getProductsFromApi(url) {
   fetch(url)
     .then(function (res) {
       if (res.ok) {
-          console.log("fetch step 1")
+          console.log("Fetch Step 1 OK")
         console.log(res);
         return res.json();
       }
     })
     .then(function (value) {
-      console.log("fetch step 2 ^ data a the top of this");
+      console.log("Fetch Step 2 OK : Value is bottom");
       console.log(value);
       loop(value)
       return value;
     })
     .catch(function (err) {
-        console.log("ERROR WITH API FETCHING. LOOK BOTTOM")
+        console.log("ERROR WITH API FETCHING.")
       console.log(err);
     });
 }
 
 
 
-// Fonction pour boucler la fonction de population (populateIndexWithProducts()) sur un array
+// Fonction pour boucler la fonction "populateIndexWithProducts()" sur un array
 function loop(list){
     for (let i = 0; i < list.length; i++) {
         populateIndexWithProducts(list[i], i);
@@ -43,8 +44,7 @@ function populateIndexWithProducts(object, index) {
   let id = object._id
   console.log(id.toString())
   let link = productURLFirstPart + '?id=' + id       //.searchParams.append("id:", id)
-    //Console.log pour check A ENLEVER
-  console.log(object.name);
+  
   // Creation des elements et ajouts des attributs et/ou du contenus
   let newLink = document.createElement("a");
   newLink.setAttribute("href", link);

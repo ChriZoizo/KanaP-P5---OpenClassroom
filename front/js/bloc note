@@ -1,0 +1,584 @@
+_id
+imageUrl
+name
+pricequantity
+
+
+
+
+_______________________________________________________________
+const apiURL = "http://localhost:3000/api/products";
+
+// Initialisation des variable/Constantes/...
+const currentUrlInString = document.location.href // URL actuelle en string
+const currentURL = new URL(currentUrlInString) // Creation d'une nouvelle URL format URL
+const id = currentURL.searchParams.get("id") // Initialisation d'une variablke a partir du "params" ID
+
+productInfoArray = [] // Nouvel array qui contiendra les
+
+ getProductFromApi(apiURL)
+
+
+// Fonction permettant les données de l'API
+async function getProductFromApi(url) {
+  fetch(url)
+  // Jerecupere les données compléte de l'API
+    .then(function (res) {
+      if (res.ok) {
+          console.log("fetch step 1")
+        console.log(res);
+        return res.json();
+      }
+    })
+    // Si elle sont ok, je selectionne le produit concerné via son ID
+    .then(function (value) {
+      productInfoArray.push(value.find(el => el._id == id))       
+      productInfoArray = productInfoArray[0]
+      displayOneProduct(productInfoArray)
+      return value.find(el => el._id == id);
+    })
+    .catch(function (err) {
+        console.log("ERROR WITH API FETCHING. LOOK BOTTOM")
+      console.log(err);
+      return err
+    });
+}
+
+// Fonction pour recuperer et afficher les infos du produits concerné
+function displayOneProduct(object) {
+    const imageContainer = document.getElementsByClassName("item__img")
+    let productImg = document.createElement("img")
+    console.log("Take IMAGE URL")
+    productImg.setAttribute('src', object.imageUrl)
+    productImg.setAttribute('alt', object.altTxt)
+    imageContainer[0].appendChild(productImg)
+    const h1Container = document.getElementById("title")
+    h1Container.innerText = object.name
+    const priceContainer = document.getElementById("price")
+    priceContainer.innerText = object.price
+    const descriptionContainer = document.getElementById("description")
+    descriptionContainer.innerText = object.description
+    const colorSelector = document.getElementById("colors") 
+    // Boucle sur l'array contenant les couleurs pour les afficher dans le selecteur
+    let colorArray = object.colors
+    for (i = 0; i < (object.colors.length); i ++){
+        let thisColor = object.colors[i]
+        let colorOption = document.createElement('option')
+        colorOption.setAttribute("value", thisColor )
+        colorOption.innerText = thisColor
+        colorSelector.appendChild(colorOption)
+    }
+
+
+    /* testing(object) */
+    console.log(productInfoArray)
+}
+
+// Fonction pour recuperer les informations de quantité et de couleur ainsi que l'ID
+// et retourne un array. Si il manque une info, retourne une alert()
+function collectDataForCart() {
+  let productToAdd = {}
+  let colorSelector = document.getElementById("colors")
+  let quantityForm = document.getElementById("quantity").value
+  
+  let selectedColor = colorSelector.options[colorSelector.selectedIndex].value
+  if (selectedColor == "" && quantityForm == 0){
+    alert("Veuillez choisir une couleur et definir une quantitée")
+  }
+  else if (quantityForm == 0) {
+    alert("Veuillez Choisir une quantitée. Car sinon nous vous enverrons zero cannapé ^^")
+  }
+  else if (selectedColor == ""){
+    alert("Veuiller choisir une couleur")
+  }
+  else {
+    productToAdd["_id"]= productInfoArray._id
+    productToAdd["color"] = selectedColor
+    productToAdd["quantity"] = quantityForm
+    return productToAdd
+  }
+}
+
+// Function qui envoie le produit avec les info dans le localStorage
+function addToCart() {
+productToAdd = collectDataForCart()
+let numberOfObjectStored = Object.keys(localStorage)
+let index = numberOfObjectStored.length
+
+localStorage.setItem("productInCart" + index, JSON.stringify(productToAdd))
+
+// A ENELVER (pour check le retour de fonction)
+let display = localStorage.getItem("productInCart0")
+let displayed = JSON.parse(display)
+console.log(displayed)
+}
+
+
+// Event Listener sur le bouton  addToCart pour l'ajout au panier
+let addToCartButton = document.getElementById('addToCart')
+addToCartButton.addEventListener('click', addToCart)
+
+
+async function addToCarte(){
+
+  console.log("adding to cart BU ALSO TESTINNNNNNNGGGGGG")
+
+  const product = await getProductFromApi(apiURL)
+  console.log("MARQUER 1")
+  const detailOfProduct = await displayOneProduct(product)
+  console.log("MARQUER 2")
+  console.log(product)
+  console.log(productsList)
+}
+
+
+
+
+######################################################################
+#######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+
+const apiURL = "http://localhost:3000/api/products";
+
+// Initialisation des variable/Constantes/...
+const currentUrlInString = document.location.href; // URL actuelle en string
+const currentURL = new URL(currentUrlInString); // Creation d'une nouvelle URL format URL
+const id = currentURL.searchParams.get("id"); // Initialisation d'une variablke a partir du "params" ID
+
+productInfoArray = []; // Nouvel array qui contiendra les infos du produits a mettre dans le panier
+
+getProductFromApi(apiURL);
+localStorage.clear() 
+
+// Fonction permettant les données de l'API
+async function getProductFromApi(url) {
+  fetch(url)
+    // Jerecupere les données compléte de l'API
+    .then(function (res) {
+      if (res.ok) {
+        console.log("fetch step 1");
+        console.log(res);
+        return res.json();
+      }
+    })
+    // Si elle sont ok, je selectionne le produit concerné via son ID
+    .then(function (value) {
+      productInfoArray.push(value.find((el) => el._id == id));
+      productInfoArray = productInfoArray[0];
+      displayOneProduct(productInfoArray);
+      return value.find((el) => el._id == id);
+    })
+    .catch(function (err) {
+      console.log("ERROR WITH API FETCHING. LOOK BOTTOM");
+      console.log(err);
+      return err;
+    });
+}
+
+// Fonction pour recuperer et afficher les infos du produits concerné
+function displayOneProduct(object) {
+  const imageContainer = document.getElementsByClassName("item__img");
+  let productImg = document.createElement("img");
+  console.log("Take IMAGE URL");
+  productImg.setAttribute("src", object.imageUrl);
+  productImg.setAttribute("alt", object.altTxt);
+  imageContainer[0].appendChild(productImg);
+  const h1Container = document.getElementById("title");
+  h1Container.innerText = object.name;
+  const priceContainer = document.getElementById("price");
+  priceContainer.innerText = object.price;
+  const descriptionContainer = document.getElementById("description");
+  descriptionContainer.innerText = object.description;
+  const colorSelector = document.getElementById("colors");
+  // Boucle sur l'array contenant les couleurs pour les afficher dans le selecteur
+  let colorArray = object.colors;
+  for (i = 0; i < object.colors.length; i++) {
+    let thisColor = object.colors[i];
+    let colorOption = document.createElement("option");
+    colorOption.setAttribute("value", thisColor);
+    colorOption.innerText = thisColor;
+    colorSelector.appendChild(colorOption);
+  }
+
+  /* testing(object) */
+  console.log(productInfoArray);
+}
+
+// Fonction pour recuperer les informations de quantité et de couleur ainsi que l'ID
+// et retourne un array. Si il manque une info, retourne une alert()
+function collectDataForCart() {
+  let productToAdd = {};
+  let colorSelector = document.getElementById("colors");
+  let quantityForm = document.getElementById("quantity").value;
+
+  let selectedColor = colorSelector.options[colorSelector.selectedIndex].value;
+  if (selectedColor == "" && quantityForm == 0) {
+    alert("Veuillez choisir une couleur et definir une quantitée");
+  } else if (quantityForm == 0) {
+    alert(
+      "Veuillez Choisir une quantitée. Car sinon nous vous enverrons zero cannapé ^^"
+    );
+  } else if (selectedColor == "") {
+    alert("Veuiller choisir une couleur");
+  } else {
+    productToAdd["_id"] = productInfoArray._id;
+    productToAdd["color"] = selectedColor;
+    productToAdd["quantity"] = parseInt(quantityForm);
+    return productToAdd;
+  }
+}
+
+// Function qui envoie le produit avec les info dans le localStorage
+function addToCart() {
+  let productToAdd = collectDataForCart();
+  console.log(productToAdd);
+
+  if (localStorage.length != 0) {
+    console.log("localstorage superieur a 0");
+    let index = 0
+    Object.keys(localStorage).forEach(function (key) {
+      let productToCheck = JSON.parse(localStorage.getItem(key));
+      console.log(parseInt(productToCheck.quantity, 10));
+      console.log("AAAAAAAAAAAAAAAAAAA"+key)
+      console.log("PRODUIT DEJA DANS LE CART " + productToCheck.quantity);
+      console.log(productToCheck);
+      console.log(productToCheck.quantity);
+      console.log("PRODUIT A AJOUTER  " + productToAdd.quantity);
+      if (
+        productToCheck._id == productToAdd._id && productToCheck.color == productToAdd.color) {
+        productToAdd.quantity += parseInt(productToCheck.quantity, 10);
+        console.log("TOTAL "+ productToAdd.quantity)
+        localStorage.removeItem(key);
+        console.log();
+        localStorage.setItem(key, JSON.stringify(productToAdd));
+        console.log(localStorage.getItem(key));
+        let allCart = { ...localStorage };
+        console.group(allCart);
+        return true
+      } else {
+        let indexToReach = localStorage.length;
+        index +=1
+        if (index == indexToReach){
+        localStorage.setItem(
+          "productInCart" + index,
+          JSON.stringify(productToAdd)
+        );
+        console.log(localStorage.length);
+      }
+      }
+    });
+  } else {
+    localStorage.setItem("productInCart0", JSON.stringify(productToAdd));
+    console.log(localStorage.length + "pas de produit dans le localStorage");
+  }
+
+  console.log("fin fonction");
+  let numberOfObjectStored = Object.keys(localStorage);
+  let allCart = { ...localStorage };
+  console.group(allCart);
+  console.log(localStorage.length);
+
+  /* for (let i = 0; i > localStorage.length; i++){
+  let productInCart = localStorage.getItem("productInCart"+(i-1))
+  if (productToAdd._id == productInCart._id && productInCart.color == productToAdd.color) {
+    console.log("AJOUTER A ELEMENT EXESTANT")
+  }
+  else {
+    console.log(i)
+    let index = numberOfObjectStored.length
+
+    localStorage.setItem("productInCart" + index, JSON.stringify(productToAdd))
+    
+
+    let display = localStorage.getItem("productInCart"+index)
+    let displayed = JSON.parse(display)
+    console.log(displayed)
+
+  } 
+} */
+}
+
+// Event Listener sur le bouton  addToCart pour l'ajout au panier
+let addToCartButton = document.getElementById("addToCart");
+addToCartButton.addEventListener("click", addToCart);
+
+async function addToCarte() {
+  console.log("adding to cart BU ALSO TESTINNNNNNNGGGGGG");
+
+  const product = await getProductFromApi(apiURL);
+  console.log("MARQUER 1");
+  const detailOfProduct = await displayOneProduct(product);
+  console.log("MARQUER 2");
+  console.log(product);
+  console.log(productsList);
+}
+
+// TESTING
+
+function displayStorage() {
+  let displayCart = { ...localStorage };
+  console.log(displayCart.length);
+}
+let survey = document.getElementById("lol");
+survey.addEventListener("click", displayStorage);
+let displayCart = { ...localStorage };
+console.log(localStorage);
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+const apiURL = "http://localhost:3000/api/products";
+
+const keyForProductInCart = "cartContent"
+// Initialisation des variable/Constantes/...
+const currentUrlInString = document.location.href; // URL actuelle en string
+const currentURL = new URL(currentUrlInString); // Creation d'une nouvelle URL format URL
+const id = currentURL.searchParams.get("id"); // Initialisation d'une variablke a partir du "params" ID
+
+let cart = [];
+productInfoArray = []; // Nouvel array qui contiendra les infos du produits a afficher
+
+getProductFromApi(apiURL);
+
+
+
+
+// Fonction permettant les données de l'API
+async function getProductFromApi(url) {
+  fetch(url)
+    // Jerecupere les données compléte de l'API
+    .then(function (res) {
+      if (res.ok) {
+        console.log("fetch step 1");
+        console.log(res);
+        return res.json();
+      }
+    })
+    // Si elle sont ok, je selectionne le produit concerné via son ID
+    .then(function (value) {
+      productInfoArray.push(value.find((el) => el._id == id));
+      productInfoArray = productInfoArray[0]
+      displayOneProduct(productInfoArray);
+      return value.find((el) => el._id == id);
+    })
+    .catch(function (err) {
+      console.log("ERROR WITH API FETCHING. LOOK BOTTOM");
+      console.log(err);
+      return err;
+    });
+}
+
+// Fonction pour recuperer et afficher les infos du produits concerné
+function displayOneProduct(object) {
+  const imageContainer = document.getElementsByClassName("item__img");
+  let productImg = document.createElement("img");
+  console.log("Take IMAGE URL");
+  productImg.setAttribute("src", object.imageUrl);
+  productImg.setAttribute("alt", object.altTxt);
+  imageContainer[0].appendChild(productImg);
+  const h1Container = document.getElementById("title");
+  h1Container.innerText = object.name;
+  const priceContainer = document.getElementById("price");
+  priceContainer.innerText = object.price;
+  const descriptionContainer = document.getElementById("description");
+  descriptionContainer.innerText = object.description;
+  const colorSelector = document.getElementById("colors");
+  // Boucle sur l'array contenant les couleurs pour les afficher dans le selecteur
+  let colorArray = object.colors;
+  for (i = 0; i < object.colors.length; i++) {
+    let thisColor = object.colors[i];
+    let colorOption = document.createElement("option");
+    colorOption.setAttribute("value", thisColor);
+    colorOption.innerText = thisColor;
+    colorSelector.appendChild(colorOption);
+  }
+}
+
+// Fonction pour recuperer les informations de quantité et de couleur ainsi que l'ID
+// et retourne un array. Si il manque une info, retourne une alert()
+function collectDataForCart() {
+  let productToAdd = {};
+  let colorSelector = document.getElementById("colors");
+  let quantityForm = document.getElementById("quantity").value;
+
+  let selectedColor = colorSelector.options[colorSelector.selectedIndex].value;
+  if (selectedColor == "" && quantityForm == 0) {
+    alert("Veuillez choisir une couleur et definir une quantitée");
+  } else if (quantityForm == 0) {
+    alert(
+      "Veuillez Choisir une quantitée. Car sinon nous vous enverrons zero cannapé ^^"
+    );
+  } else if (selectedColor == "") {
+    alert("Veuiller choisir une couleur");
+  } else {
+    productToAdd["_id"] = productInfoArray._id;
+    productToAdd["color"] = selectedColor;
+    productToAdd["quantity"] = parseInt(quantityForm);
+    return productToAdd;
+  }
+}
+
+function collectDataFromCart(){
+ let array = JSON.parse(localStorage.getItem("cartContent"))
+
+return array
+}
+
+function duplicateChecker(object) {
+  console.log(cartContent)
+  if (cartContent.length != 0) {
+    cartContent.forEach(function (productInCart) {
+      if (
+        productInCart._id == object._id &&
+        productInCart.color == object.color
+      ) {
+        productInCart.quantity += object.quantity;
+
+        return true;
+      } else {
+        return false;
+      }
+    });
+    localStorage.setItem("cartContent", cartContent)
+  } else {
+    cartContent.push(object);
+    localStorage.setItem("cartContent", cartContent);
+  }
+  console.log(allCart)
+}
+
+// Function qui envoie le produit avec les info dans le localStorage
+function addToCart() {
+  let productToAdd = collectDataForCart();
+  let cartContent = collectDataFromCart()
+  console.log(productToAdd)
+  duplicateChecker(productToAdd)
+  cartContent.push(productToAdd)
+   localStorage.setItem("cartContent", JSON.stringify(cartContent)) 
+
+
+
+  if (cart.length != 0) {
+    console.log("localstorage superieur a 0");
+    let index = 0;
+    cart.forEach(function (key) {
+      let productToCheck = JSON.parse(localStorage.getItem(key));
+      if (
+        productToCheck._id == productToAdd._id &&
+        productToCheck.color == productToAdd.color
+      ) {
+        productToAdd.quantity += parseInt(productToCheck.quantity, 10);
+        localStorage.removeItem(key);
+        localStorage.setItem(key, JSON.stringify(productToAdd));
+        console.log(localStorage.getItem(key));
+        let allCart = { ...localStorage };
+        console.group(allCart);
+        return true;
+      } else {
+        let indexToReach = localStorage.length;
+        index += 1;
+        if (index == indexToReach) {
+          localStorage.setItem(
+            "productInCart" + index,
+            JSON.stringify(productToAdd)
+          );
+          console.log(localStorage.length);
+        }
+      }
+    });
+  } else {
+    console.log(localStorage.length + "pas de produit dans le localStorage");
+  }
+
+  console.log("fin fonction");
+  let numberOfObjectStored = Object.keys(localStorage);
+  let allCart = { ...localStorage };
+  console.log(allCart);
+  console.log(localStorage.length);
+
+  /* for (let i = 0; i > localStorage.length; i++){
+  let productInCart = localStorage.getItem("productInCart"+(i-1))
+  if (productToAdd._id == productInCart._id && productInCart.color == productToAdd.color) {
+    console.log("AJOUTER A ELEMENT EXESTANT")
+  }
+  else {
+    console.log(i)
+    let index = numberOfObjectStored.length
+
+    localStorage.setItem("productInCart" + index, JSON.stringify(productToAdd))
+    
+
+    let display = localStorage.getItem("productInCart"+index)
+    let displayed = JSON.parse(display)
+    console.log(displayed)
+
+  } 
+} */
+}
+
+tableau {[A1: "|"], [A2: " "], [A3: "|"]}
+
+// Event Listener sur le bouton  addToCart pour l'ajout au panier
+let addToCartButton = document.getElementById("addToCart");
+addToCartButton.addEventListener("click", addToCart);
+
+async function addToCarte() {
+  console.log("adding to cart BU ALSO TESTINNNNNNNGGGGGG");
+
+  const product = await getProductFromApi(apiURL);
+  console.log("MARQUER 1");
+  const detailOfProduct = await displayOneProduct(product);
+  console.log("MARQUER 2");
+  console.log(product);
+  console.log(productsList);
+}
+
+// TESTING
+
+function displayStorage() {
+  let displayCart = { ...localStorage };
+  console.log(displayCart.length);
+}
+let survey = document.getElementById("lol");
+survey.addEventListener("click", displayStorage);
+
+console.log(localStorage);
