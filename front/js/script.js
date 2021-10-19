@@ -69,18 +69,7 @@ function populateIndexWithProducts(object, index) {
   //----------------------------------
   // ALTERNATIVE avec INNERHTML ?
 }
-
-
-
-  // Lance la boucle pour peuplé l'index avec les produits lorsque la page est charger
-
 // A FAIRE !
-
-
-
-
-
-
 
 // FONCTION TEST
 

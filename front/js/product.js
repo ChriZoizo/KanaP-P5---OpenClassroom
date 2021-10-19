@@ -5,11 +5,11 @@ const currentURL = new URL(currentUrlInString); // Creation d'une nouvelle URL f
 const id = currentURL.searchParams.get("id"); // Initialisation d'une variablke a partir du "params" ID
 
 // Initialisation des variable/Constantes/...
-const apiURL = "http://localhost:3000/api/products";
+const apiURL = "http://localhost:3000/api/products/";
 /* let cart = []; */
 productInfoArray = []; // Nouvel array qui contiendra les infos du produits a afficher
 
-getProductFromApi(apiURL);
+getProductFromApi(apiURL+id);
 
 
 // Fonction de recuperation du contenus de l'API
@@ -22,12 +22,12 @@ async function getProductFromApi(url) {
         return res.json();
       }
     })
-    // Ici je reecupere les infos du produits voulusvia son "_id"
-    // et je passe ses infos en parametre lors de l'appel de la fonction d'affichage
+    // recuperation des infos du produits via son "_id"
+    // passe ses infos en parametre lors de l'appel de la fonction d'affichage
     .then(function (value) {
-      productInfoArray = value.find((el) => el._id == id);
+      productInfoArray = value
       displayOneProduct(productInfoArray);
-      return value.find((el) => el._id == id);
+      return value
     })
     .catch(function (err) {
       console.log("FETCHING Erreur !");
@@ -38,7 +38,7 @@ async function getProductFromApi(url) {
 
 // Fonction pour afficher les informations du produit
 function displayOneProduct(object) {
-  const imageContainer = document.getElementsByClassName("item__img");
+  const imageContainer = document.getElementsByClassName("item__img"); // QUERYSELECTOR ??
   let productImg = document.createElement("img");
   console.log("Take IMAGE URL");
   productImg.setAttribute("src", object.imageUrl);
