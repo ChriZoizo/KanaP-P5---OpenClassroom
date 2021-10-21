@@ -54,7 +54,7 @@ exports.orderProducts = (req, res, next) => {
       !req.body.contact.city ||
       !req.body.contact.email ||
       !req.body.products) {
-    return res.status(400).send(new Error('Bad request!'));
+    return res.status(400).send(new Error('Bad request!' + body.contact + body.products));
   }
   let queries = [];
   for (let productId of req.body.products) {

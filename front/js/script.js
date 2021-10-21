@@ -4,7 +4,11 @@ const apiURL = "http://localhost:3000/api/products/";
 const currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
 // Creation de la base de l'url qui servira au peuplé les liens des produits
 const productURLFirstPart = new URL(currentURL.replace("index.html", "product.html"))
-apiList = getProductsFromApi(apiURL);
+
+import Tester from './index.js'
+
+// Initialisation de la fonction de fetch
+getProductsFromApi(apiURL);
 
 
 // Fonction permettant le fetch de l'api puis appel la fonction "loop()" en lui passant le resultat du fetch en parametre
@@ -12,13 +16,12 @@ function getProductsFromApi(url) {
   fetch(url)
     .then(function (res) {
       if (res.ok) {
-          console.log("Fetch Step 1 OK")
-        console.log(res);
+          console.log("Fetch Step 1 : res is OK")
         return res.json();
       }
     })
     .then(function (value) {
-      console.log("Fetch Step 2 OK : Value is bottom");
+      console.log("Fetch Step 2 : Initialize loop() function");
       console.log(value);
       loop(value)
       return value;
@@ -42,7 +45,6 @@ function loop(list){
   // Fonction pour peupler l'index avec les produits de l'API 
 function populateIndexWithProducts(object, index) {
   let id = object._id
-  console.log(id.toString())
   let link = productURLFirstPart + '?id=' + id       //.searchParams.append("id:", id)
   
   // Creation des elements et ajouts des attributs et/ou du contenus
@@ -58,32 +60,11 @@ function populateIndexWithProducts(object, index) {
   let newP = document.createElement("p");
   newP.setAttribute("class", "productDescription");
   newP.innerText = object.description;
-  // injection dans le code HTML
+  // injection des éléments dans le code HTML
   const itemContainer = document.getElementById("items");
   itemContainer.appendChild(newLink);
   newLink.appendChild(newArticle);
   newArticle.appendChild(newImg);
   newArticle.appendChild(newH3);
   newArticle.appendChild(newP);
-
-  //----------------------------------
-  // ALTERNATIVE avec INNERHTML ?
 }
-// A FAIRE !
-
-// FONCTION TEST
-
-// EventListener POour tester (click sur le header pour lancer fonction)
-document
-  .getElementById("test")
-  .addEventListener("click", prime);
-
-
-function prime() {
-    loop(apiList)
-  console.log("prime");
-  console.log(apiList)
-}
-
-
-

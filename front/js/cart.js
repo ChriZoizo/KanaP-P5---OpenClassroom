@@ -5,10 +5,18 @@ const items = { ...localStorage };
 const apiURL = "http://localhost:3000/api/products/";
 // recuperation du contenus du localStorage
 let cartList = JSON.parse(localStorage.getItem("cartContent"));
+let urlChecker = window.location.pathname
+let cartHTML = /cart.html/
+let confirmationHTML = /confirmation.html/
+if (cartHTML.test(urlChecker) == true){
+loader(apiURL);
+listenOrderButton()
+}
+else if (confirmationHTML.test(urlChecker) == true){
+  displayConfirmationCode()
+}
 
-const listOfProducts = loader(apiURL);
-
-/* Fonction qui recupere les objets de l'API, et lance la fonction loop() avec le resultat
+/* A / Fonction qui recupere les objets de l'API, et lance la fonction loop() avec le resultat
 @param { string } url
 @return { array } value
 @return { array } value.colors
@@ -38,16 +46,16 @@ function loader(url) {
     });
 }
 
-/*  Fonction qui va parcourir le contenus du panier pour calculer le prix total du panier et le nombre d'articles,
-et recuperer les information dans l'array allProducts qui contient toute l'API 
+/* B / Fonction qui va parcourir le contenus du panier pour calculer le prix total du panier et le 
+nombre d'articles, et recuperer les information dans l'array allProducts qui contient toute l'API 
 
-@param { Array } allProducts
+@param { Array } allProducts      
 @return { Number } totalQuantityOfProducts
 @return { Number } totalCartPrice
 @return { Array } product
-@return { String } product._id
-@return { String } product.color
-@return { Number } product.quantity
+        >>{ String } product._id
+        >>{ String } product.color
+        >>{ Number } product.quantity
 @return { Object } productInfos
 */
 function loopOverCartList(allProducts) {
@@ -64,103 +72,55 @@ function loopOverCartList(allProducts) {
   displayTotalPriceAndQuantity(totalCartPrice, totalQuantityOfProducts);
 }
 
-// Fonction pour affficher les information des produits du paniers ainsi que les infos necessaires correspondant au produit dans l'API
+/*  C / Fonction pour affficher les information des produits du paniers ainsi que les infos 
+necessaires correspondant au produit dans l'API */
 function populateWithCartProducts(objectInfos, objectFromCart) {
-  // ALTERNATIVE INNERHTML !!!!!
+
+  let htmlOfProduct = `<div class="cart__item__img">\
+  <img src="${objectInfos.imageUrl}" alt="${objectInfos.altTxt}">\
+</div>\
+<div class="cart__item__content">\
+  <div class="cart__item__content__titlePrice">\
+    <h2>${objectInfos.name}</h2>\
+    <p>${parseInt(objectInfos.price).toFixed(2)} €</p>\
+  </div>\
+  <div class="cart__item__content__settings">\
+    <div class="cart__item__content__settings__quantity">\
+      <p id="displayQty ${objectInfos._id} ${objectFromCart.color}">Qté : ${objectFromCart.quantity}</p>\
+      <input id="input ${objectInfos._id} ${objectFromCart.color}"type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${objectFromCart.quantity}">\
+    </div>\
+    <div class="cart__item__content__settings__delete">\
+      <p class="deleteItem" id="delete ${objectInfos._id} ${objectFromCart.color}">Supprimer</p>\
+    </div>\
+  </div>\
+</div>`
+
   const articleContainer = document.getElementById("cart__items");
+  let newArticleItemInner = document.createElement("article");
+  newArticleItemInner.setAttribute("data-id", objectInfos._id + objectFromCart.color);
+  newArticleItemInner.setAttribute("class", "cart__item");
+  articleContainer.appendChild(newArticleItemInner);
+  newArticleItemInner.innerHTML = htmlOfProduct
+  
+/* C - 1 / AJOUT ADDEVENTLISTENER
+   C - 1 - a / addEventListener pour le bouton supprimer */
+    document.getElementById(`delete ${objectInfos._id} ${objectFromCart.color}`).addEventListener("click", function () {
+      deleteItem(objectFromCart);
+    });
 
-  let newArticleItem = document.createElement("article");
-  newArticleItem.setAttribute("class", "cart__item");
-  newArticleItem.setAttribute("data-id", objectInfos._id);
-
-  let newDivForImg = document.createElement("div");
-  newDivForImg.setAttribute("class", "cart__item__img");
-
-  let newImg = document.createElement("img");
-  newImg.setAttribute("src", objectInfos.imageUrl);
-  newImg.setAttribute("alt", objectInfos.altTxt);
-
-  let newArticleItemContent = document.createElement("div");
-  newArticleItemContent.setAttribute("class", "cart__item__content");
-
-  let newArticleItemPriceContainer = document.createElement("div");
-  newArticleItemPriceContainer.setAttribute(
-    "class",
-    "cart__item__content__titlePrice"
-  );
-
-  let newArticleItemTitle = document.createElement("h2");
-  newArticleItemTitle.innerText =
-    objectInfos.name + " (" + objectFromCart.color + ")";
-  let newArticleItemPrice = document.createElement("p");
-  newArticleItemPrice.innerText = parseInt(objectInfos.price).toFixed(2) + " €";
-
-  let newArticleItemSettings = document.createElement("div");
-  newArticleItemSettings.setAttribute("class", "cart__item__content__settings");
-
-  let newArticleQuantity = document.createElement("div");
-  newArticleQuantity.setAttribute(
-    "class",
-    "cart__item__content__settings__quantity"
-  );
-
-  let articleQuantity = document.createElement("p");
-  articleQuantity.innerText = "Qté: " + objectFromCart.quantity;
-
-  let newQuantityInput = document.createElement("input");
-  newQuantityInput.setAttribute("type", "number");
-  newQuantityInput.setAttribute("id", objectFromCart._id);
-  newQuantityInput.setAttribute("class", "itemQuantity");
-  newQuantityInput.setAttribute("name", "itemQuantity");
-  newQuantityInput.setAttribute("min", "1");
-  newQuantityInput.setAttribute("max", "100");
-  newQuantityInput.setAttribute("value", objectFromCart.quantity);
-
-  let newArticleDeleteButton = document.createElement("div");
-  newArticleDeleteButton.setAttribute(
-    "class",
-    "cart__item__content__settings__delete"
-  );
-
-  let newDeleteButton = document.createElement("p");
-  newDeleteButton.setAttribute("class", "deleteItem");
-  newDeleteButton.innerText = "Supprimer";
-
-  articleContainer.appendChild(newArticleItem);
-  newArticleItem.appendChild(newDivForImg);
-  newDivForImg.appendChild(newImg);
-  newArticleItem.appendChild(newArticleItemContent);
-  newArticleItemContent.appendChild(newArticleItemPriceContainer);
-  newArticleItemPriceContainer.appendChild(newArticleItemTitle);
-  newArticleItemPriceContainer.appendChild(newArticleItemPrice);
-  newArticleItemContent.appendChild(newArticleItemSettings);
-  newArticleItemSettings.appendChild(articleQuantity);
-  newArticleItemSettings.appendChild(newQuantityInput);
-  newArticleItemContent.appendChild(newArticleDeleteButton);
-  newArticleDeleteButton.appendChild(newDeleteButton);
-
-  /* ajouts addEventListener pour le bouton "supprimer"
-    Type => click
-    Fonction => appel la fonction "deleteItem" en envoyant l'array du produit en tant que parametre
-    */
-  newArticleDeleteButton.addEventListener("click", function () {
-    deleteItem(objectFromCart);
-  });
-  /*  Ajout addEventListener pour le changement de l'input reglant la quantité
-    Type => change
-    Fonction => "if" => quantitée a 0, appel la fonction deleteItem avec l'array du produit en parametre
-                "else" => appel la fonction changeQuantity avec la nouvelle quantitée en paramétre
-      */
-  newQuantityInput.addEventListener("change", function () {
-    let newQuantity = Math.floor(newQuantityInput.value);
+/* C - 1 - b / addEventListener de l'input reglant la quantité */
+  document.getElementById(`input ${objectInfos._id} ${objectFromCart.color}`).addEventListener("change", function () {
+    let newQuantity = Math.floor(document.getElementById(`input ${objectInfos._id} ${objectFromCart.color}`).value);
     if (newQuantity == 0) {
       deleteItem(objectFromCart);
     } else {
-      changeQuantity(newQuantity);
+      changeQuantityInner(newQuantity)
     }
   });
-  //SOUS-FONCTIONS assignés aux objets dans le localStorage.content
-  /* Fonction pour supprimer l'objet => Demande une confirmation via une alerte */
+
+/* C - 2 FONCTIONS A PORTéE REDUITE
+   C - 2 - a / Fonction pour supprimer l'objet => Demande une confirmation via une alerte 
+        @params {Array} object */
   function deleteItem(object) {
     index = findIndexInCart(object);
     let confirm = window.confirm(
@@ -169,22 +129,31 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
     if (confirm == true) {
       cartList.splice(index, 1);
       localStorage.setItem("cartContent", JSON.stringify(cartList));
+      window.alert("Produit supprimé du panier")
       location.reload();
     } else if (confirm == false) {
+      window.alert("Action de suppression annulée")
     }
   }
-  // Fonction pour enregistrer une quantité d'un produit dans le localStorage
-  function changeQuantity(newQuantity) {
-    index = findIndexInCart(objectFromCart);
-    objectFromCart.quantity = newQuantity;
+
+/* C - 2 - b / Fonction pour enregistrer les changement de quantité d'un produit dans le localStorage
+                  et modifie la quantité affiché sur la page
+                  @params {Number} quantity
+                  @var    {Number} index */
+  function changeQuantityInner(quantity) {
+  index = findIndexInCart(objectFromCart);
+    objectFromCart.quantity = quantity;
     cartList.splice(index, 1, objectFromCart);
     localStorage.setItem("cartContent", JSON.stringify(cartList));
     console.log(objectFromCart.quantity);
-    articleQuantity.innerText = "Qté: " + objectFromCart.quantity;
+    document.getElementById(`displayQty ${objectInfos._id} ${objectFromCart.color}`).innerText = `Qté : ${quantity}`;
   }
 }
 
-// FONCTION A COMMENTéE
+/* D / Fonction qui recupere le prix total et la quantité de produits total. 
+    Le prix est calculer au prealable par la fonction "loop()" 
+    @params {Number} totalPrice
+    @param {Number} totalQuantity */
 function displayTotalPriceAndQuantity(totalPrice, totalQuantity) {
   let productInCartQuantityContainer = document.getElementById("totalQuantity");
   let cartPriceContainer = document.getElementById("totalPrice");
@@ -193,21 +162,47 @@ function displayTotalPriceAndQuantity(totalPrice, totalQuantity) {
   cartPriceContainer.innerText = totalPrice;
 }
 
-// FONCTION A COMMENTéE
-function findIndexInCart(object) {
+/* E / Fonction qui n'a comme but uniquement de lancer un EventListener sur le boutton "commader"*/
+function listenOrderButton(){
+  let orderButton = document.getElementById("order");
+orderButton.addEventListener("click", function(event)
+ { event.preventDefault()
+checkDataFromForm()
+}
+);
+}
+
+/* F / Fonction permettant de trouver l'index d'un produit par rapport au localStorage.cartContent
+    @params {Array} item
+             >>{String} _id
+             >>{String} color
+             >>{Number} quantity
+    @return {Number} index */
+function findIndexInCart(item) {
   for (const [index, element] of cartList.entries()) {
-    if (element._id == object._id && element.color == object.color) {
+    if (element._id == item._id && element.color == item.color) {
       return index;
     }
   }
 }
 
-// FONCTION A COMMENTéE
+/* G / Fonction qui recuperer les données entrée par l'utilisateur dans le formaulaire de commande,
+verifie la presence de caracteres potentiellement dangereux, lance une alerte le cas echeant, sinon
+deux objets seront crées (contact et products) puis envoyer en tant que parametre lkors de l'appel 
+de la fonction "sendOrderToApi()"
+    @return {Array} contact
+             >>{String} firstName       
+             >>{String} lastName       
+             >>{String} address       
+             >>{String} city       
+             >>{String} email  
+    @return {Array} productsIds
+             >>{String} _id */
 function checkDataFromForm() {
   let contact = {};
   let productsIds = [];
-  let regExChecker = /[<>\\{}]/;
-  let regExNamesChecker = /[<>\\{}0-9]/;
+  let regExChecker = /[&<>\\\`\"{}]/;
+  let regExNamesChecker = /[&<>\\\`\"\{}0-9]/;
   contact["firstName"] = document.getElementById("firstName").value.toString()
   contact["lastName"] = document.getElementById("lastName").value.toString()
   contact["address"] = document.getElementById("address").value.toString()
@@ -237,18 +232,31 @@ function checkDataFromForm() {
     regExChecker.test(contact["city"]) == false &&
     regExChecker.test(contact["email"]) == false
   ) {
-    /*     contact["orderId"] = Math.random(); */
-    console.log('##############################')
     cartList.forEach(function (product) {
       productsIds.push(product._id);
     });
 
-    send(productsIds, contact);
+    sendOrderToApi(productsIds, contact);
   }
 }
 
-// FONCTION A COMMENTéE
-function send(prod, contact) {
+/* H / Fonction permettant la creation de l'objet "order" a partir des objets transmis en parametre
+puis les envoie une requete POST a l'api qui renvoie l'objet, mais egalement orderId et appelle la 
+fonction switchViewToConfirm()
+    @params {Array} contact
+             >>{String} firstName       
+             >>{String} lastName       
+             >>{String} address       
+             >>{String} city       
+             >>{String} email  
+    @params {Array} productsIds
+             >>{String} _id
+    @return {Array} contact
+    @return {Array} productsIds
+    @return {String} orderId
+*/
+    
+function sendOrderToApi(prod, contact) {
 order = {}
 order["products"]= prod
 order["contact"]=contact
@@ -276,23 +284,24 @@ let products = prod
     });
 }
 
-let orderButton = document.getElementById("order");
-orderButton.addEventListener("click", function(event)
- { event.preventDefault()
-checkDataFromForm()
-}
-);
+/* *** Fonctions pour le fichier "confirmation.html" UNIQUEMENT */
 
+/* I - 1 / Fonction qui permet d'ouvrire un nouvel onglet en passant le parametre d'entrée en tant que
+params de l'URL et appel la fonction displayConfirmationCode() 
+    @params {String} orderId*/
 
 function switchViewToConfirm(orderId){
-  window.location.replace("./confirmation.html?orderId="+ orderId)
-  displayConfirmationCode(orderId)
+/*   window.location.replace("./confirmation.html?orderId="+ orderId) */
+  window.open("./confirmation.html?orderId="+ orderId, '_blank')
+  window.onload = function(){
+  displayConfirmationCode()}
 }
 
-function displayConfirmationCode(confirmationCode){
+/* I - 2 / Fonction qui permet d'afficher l'orderId sur la page "confirmation.html" en la recuperant
+dans l'URL
+*/
+function displayConfirmationCode(){
   const currentURL = new URL(document.location.href); // Creation d'une nouvelle URL format URL
-const id = currentURL.searchParams.get("orderId"); // Initialisation d'une variablke a partir du "params" ID
+  document.getElementById('orderId').innerText = currentURL.searchParams.get("orderId"); // Injection de l'orderId recuperer dans l'URL et injecter dans le HTML
 
-  let displayer = document.getElementById('orderId')
-  displayer.innerText = id
 }
