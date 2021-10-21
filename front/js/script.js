@@ -1,70 +1,75 @@
-//Declaration de l'URL de l'api
-const apiURL = "http://localhost:3000/api/products/";
-// Declaration d'une variable contenant l'URL actuelle
-const currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-// Creation de la base de l'url qui servira au peuplé les liens des produits
-const productURLFirstPart = new URL(currentURL.replace("index.html", "product.html"))
+// A / Variables
+const apiURL = 'http://localhost:3000/api/products/' //Declaration de l'URL de l'api
+const currentURL =                                   // Declaration d'une variable contenant l'URL actuelle
+  window.location.protocol +
+  '//' +
+  window.location.host +
+  window.location.pathname
+const productURLFirstPart = new URL(currentURL.replace('index.html', 'product.html'))// Creation de la base de l'url qui servira au peuplé les liens des produits
 
-import Tester from './index.js'
+// B - 1 / Import
+import Tester from './lib.js'
 
-// Initialisation de la fonction de fetch
-getProductsFromApi(apiURL);
+    // CODE
+getProductsFromApi(apiURL)                      // appel de la fonction de fetch avec l'url de l'API en params
 
-
-// Fonction permettant le fetch de l'api puis appel la fonction "loop()" en lui passant le resultat du fetch en parametre
-function getProductsFromApi(url) {
+/* C / Fonction permettant le fetch de l'api puis appel la fonction "populateIndexWithProducts()" 
+en lui passant le resultat du fetch en parametre 
+  @params { String } url
+  @return { Array } value */
+function getProductsFromApi (url) {
   fetch(url)
     .then(function (res) {
       if (res.ok) {
-          console.log("Fetch Step 1 : res is OK")
-        return res.json();
+        console.log('Fetch Step 1 : res is OK')
+        return res.json()
       }
     })
     .then(function (value) {
-      console.log("Fetch Step 2 : Initialize loop() function");
-      console.log(value);
-      loop(value)
-      return value;
+      console.log('Fetch Ok : Returning res')
+      console.log(value)
+      populateIndexWithProducts(value)
+      return value
     })
     .catch(function (err) {
-        console.log("ERROR WITH API FETCHING.")
-      console.log(err);
-    });
+      console.log('ERROR WITH APP.')
+      console.log(err)
+    })
 }
 
+/* D / Fonction qui passe en revus les items de l'array passé en parametre et affiche certaines 
+informations les produits sur la page HTML en modifiant le DOM
+@params {Array} allProducts
+        >> { Array } product
+          >> { String } _id
+          >> { String } name
+          >> { String } imageUrl
+          >> { String } altTxt
+          >> { String } description */
+function populateIndexWithProducts (allProducts) {
+  for (let object of allProducts) {
+    let link = productURLFirstPart + '?id=' + object._id // Creation de l'url href du produits
+    const itemContainer = document.getElementById('items') // Ciblage du conteneur des <article>
 
+    // Creation des elements et ajouts des attributs et du contenus
+    let newLink = document.createElement('a')                      // Creation <a> 
+    newLink.setAttribute('href', link)                             
+    let newArticle = document.createElement('article')             // Creation <article>
+    let newImg = document.createElement('img')                     // Creation <img>
+    newImg.setAttribute('src', object.imageUrl)
+    newImg.setAttribute('alt', object.altTxt + ', ' + object.name)
+    let newH3 = document.createElement('h3')                        // Creation <h3>
+    newH3.setAttribute('class', 'productName')
+    newH3.innerHTML = object.name
+    let newP = document.createElement('p')                          // Creation <p>
+    newP.setAttribute('class', 'productDescription')
+    newP.innerText = object.description
+    // injection des éléments dans le code HTML
 
-// Fonction pour boucler la fonction "populateIndexWithProducts()" sur un array
-function loop(list){
-    for (let i = 0; i < list.length; i++) {
-        populateIndexWithProducts(list[i], i);
-      }
-      console.log("index content loaded from api: LOOP ENDED")
-}
-
-  // Fonction pour peupler l'index avec les produits de l'API 
-function populateIndexWithProducts(object, index) {
-  let id = object._id
-  let link = productURLFirstPart + '?id=' + id       //.searchParams.append("id:", id)
-  
-  // Creation des elements et ajouts des attributs et/ou du contenus
-  let newLink = document.createElement("a");
-  newLink.setAttribute("href", link);
-  let newArticle = document.createElement("article");
-  let newImg = document.createElement("img");
-  newImg.setAttribute("src", object.imageUrl);
-  newImg.setAttribute("alt", object.altTxt + ", " + object.name);
-  let newH3 = document.createElement("h3");
-  newH3.setAttribute("class", "productName");
-  newH3.innerHTML = object.name;
-  let newP = document.createElement("p");
-  newP.setAttribute("class", "productDescription");
-  newP.innerText = object.description;
-  // injection des éléments dans le code HTML
-  const itemContainer = document.getElementById("items");
-  itemContainer.appendChild(newLink);
-  newLink.appendChild(newArticle);
-  newArticle.appendChild(newImg);
-  newArticle.appendChild(newH3);
-  newArticle.appendChild(newP);
+    itemContainer.appendChild(newLink)
+    newLink.appendChild(newArticle)
+    newArticle.appendChild(newImg)
+    newArticle.appendChild(newH3)
+    newArticle.appendChild(newP)
+  }
 }

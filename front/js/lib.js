@@ -18,7 +18,7 @@ export function jus(){
   console.log('JUS DE FRUIT')
 }
 
-export function fer(url) {
+export function getProductsFromApi(url) {
   fetch(url)
     .then(function (res) {
       if (res.ok) {
@@ -27,12 +27,12 @@ export function fer(url) {
       }
     })
     .then(function (value) {
-      console.log("Fetch Step 2 : Initialize loop() function");
+      console.log("Fetch OK : Res returned");
       console.log(value);
       return value;
     })
     .catch(function (err) {
-        console.log("ERROR WITH API FETCHING.")
+        console.log("ERROR WITH APP.")
       console.log(err);
     });
 }

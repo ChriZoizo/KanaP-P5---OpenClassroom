@@ -23,7 +23,7 @@ async function getProductFromApi(url) {
       }
     })
     // recuperation des infos du produits via son "_id"
-    // passe ses infos en parametre lors de l'appel de la fonction d'affichage
+    // passe les infos en parametre lors de l'appel de la fonction d'affichage
     .then(function (value) {
       productInfoArray = value
       displayOneProduct(productInfoArray);
