@@ -1,12 +1,12 @@
-// Variable ????
+// Variables
 const currentUrlInString = document.location.href; // Enregistrement URL actuelle
 const currentURL = new URL(currentUrlInString); // Creation d'une nouvelle URL format URL
 const id = currentURL.searchParams.get("id"); // Initialisation d'une variablke a partir du "params" ID
 
-// Initialisation des variable/Constantes/...
 const apiURL = "http://localhost:3000/api/products/";
 productInfoArray = []; // Nouvel array qui contiendra les infos du produits a afficher apres le ftech
 
+// Appel de la premiere fonction en plaçant l'api de l'url + l'id du produit
 getProductFromApi(apiURL+id);
 
 // Fonction de recuperation du contenus de l'API

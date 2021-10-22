@@ -1,5 +1,3 @@
-// Imports
-
 // Variables locales
 const apiURL = "http://localhost:3000/api/products/"; // Declaration de l'URL de l'api
 let cartList = JSON.parse(localStorage.getItem("cartContent")); // Contenus du localStorage dans variable

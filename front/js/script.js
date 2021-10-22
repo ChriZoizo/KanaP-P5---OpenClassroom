@@ -50,7 +50,6 @@ function populateIndexWithProducts (allProducts) {
     let link = productURLFirstPart + '?id=' + object._id // Creation de l'url href du produits
     const itemContainer = document.getElementById('items') // Ciblage du conteneur des <article>
 
-    // Creation des elements et ajouts des attributs et du contenus
     let newLink = document.createElement('a') // Creation <a>
     newLink.setAttribute('href', link)
     let newArticle = document.createElement('article') // Creation <article>
