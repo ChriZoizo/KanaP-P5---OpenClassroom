@@ -1,19 +1,18 @@
 // A / Variables
 const apiURL = 'http://localhost:3000/api/products/' //Declaration de l'URL de l'api
-const currentURL =                                   // Declaration d'une variable contenant l'URL actuelle
+const currentURL = // Declaration d'une variable contenant l'URL actuelle
   window.location.protocol +
   '//' +
   window.location.host +
   window.location.pathname
-const productURLFirstPart = new URL(currentURL.replace('index.html', 'product.html'))// Creation de la base de l'url qui servira au peuplé les liens des produits
+const productURLFirstPart = new URL(
+  currentURL.replace('index.html', 'product.html')
+) // Creation de la base de l'url qui servira au peuplé les liens des produits
 
-// B - 1 / Import
-import Tester from './lib.js'
+// CODE
+getProductsFromApi(apiURL) // appel de la fonction de fetch avec l'url de l'API en params
 
-    // CODE
-getProductsFromApi(apiURL)                      // appel de la fonction de fetch avec l'url de l'API en params
-
-/* C / Fonction permettant le fetch de l'api puis appel la fonction "populateIndexWithProducts()" 
+/* B / Fonction permettant le fetch de l'api puis appel la fonction "populateIndexWithProducts()" 
 en lui passant le resultat du fetch en parametre 
   @params { String } url
   @return { Array } value */
@@ -37,7 +36,7 @@ function getProductsFromApi (url) {
     })
 }
 
-/* D / Fonction qui passe en revus les items de l'array passé en parametre et affiche certaines 
+/* C / Fonction qui passe en revus les items de l'array passé en parametre et affiche certaines 
 informations les produits sur la page HTML en modifiant le DOM
 @params {Array} allProducts
         >> { Array } product
@@ -52,21 +51,20 @@ function populateIndexWithProducts (allProducts) {
     const itemContainer = document.getElementById('items') // Ciblage du conteneur des <article>
 
     // Creation des elements et ajouts des attributs et du contenus
-    let newLink = document.createElement('a')                      // Creation <a> 
-    newLink.setAttribute('href', link)                             
-    let newArticle = document.createElement('article')             // Creation <article>
-    let newImg = document.createElement('img')                     // Creation <img>
+    let newLink = document.createElement('a') // Creation <a>
+    newLink.setAttribute('href', link)
+    let newArticle = document.createElement('article') // Creation <article>
+    let newImg = document.createElement('img') // Creation <img>
     newImg.setAttribute('src', object.imageUrl)
     newImg.setAttribute('alt', object.altTxt + ', ' + object.name)
-    let newH3 = document.createElement('h3')                        // Creation <h3>
+    let newH3 = document.createElement('h3') // Creation <h3>
     newH3.setAttribute('class', 'productName')
     newH3.innerHTML = object.name
-    let newP = document.createElement('p')                          // Creation <p>
+    let newP = document.createElement('p') // Creation <p>
     newP.setAttribute('class', 'productDescription')
     newP.innerText = object.description
-    // injection des éléments dans le code HTML
 
-    itemContainer.appendChild(newLink)
+    itemContainer.appendChild(newLink) // injection des éléments dans le code HTML
     newLink.appendChild(newArticle)
     newArticle.appendChild(newImg)
     newArticle.appendChild(newH3)

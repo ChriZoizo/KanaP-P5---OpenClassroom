@@ -65,8 +65,9 @@ function loopOverCartList(arrayFromApi) {
     totalCartPrice += parseInt(product.quantity) * parseInt(productInfos.price);
     populateWithCartProducts(productInfos, product);
   });
-  displayTotalPriceAndQuantity(totalCartPrice, totalQuantityOfProducts);
+  displayTotalPriceAndQuantity();
 }
+
 
 /*  C / Fonction pour affficher les information des produits du paniers ainsi que les infos 
 necessaires correspondant au produit dans l'API 
@@ -90,7 +91,7 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
 <div class="cart__item__content">\
   <div class="cart__item__content__titlePrice">\
     <h2>${objectInfos.name}</h2>\
-    <p>${parseInt(objectInfos.price).toFixed(2)} €</p>\
+    <p class="itemPrice">${parseInt(objectInfos.price).toFixed(2)} €</p>\
   </div>\
   <div class="cart__item__content__settings">\
     <div class="cart__item__content__settings__quantity">\
@@ -128,7 +129,7 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
 
 /* C - 2 FONCTIONS A PORTéE REDUITE
    C - 2 - a / Fonction pour supprimer l'objet => Demande une confirmation via une alerte 
-        @params {Array} object */
+        @params { Array } object */
   function deleteItem(object) {
     index = findIndexInCart(object);
     let confirm = window.confirm(  // demande de confirmation
@@ -161,14 +162,23 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
 
 /* D / Fonction qui recupere le prix total et la quantité de produits total. 
     Le prix est calculer au prealable par la fonction "loop()" 
-    @params {Number} totalPrice
-    @param {Number} totalQuantity */
-function displayTotalPriceAndQuantity(totalPrice, totalQuantity) {
-  let productInCartQuantityContainer = document.getElementById("totalQuantity");
-  let cartPriceContainer = document.getElementById("totalPrice");
-
-  productInCartQuantityContainer.innerText = totalQuantity;
-  cartPriceContainer.innerText = totalPrice;
+    @return { Number } totalPrice */
+function displayTotalPriceAndQuantity() {
+  const arrayQuantity = document.getElementsByClassName('itemQuantity') // Recupere tout les input de quantité
+  const arrayPrice = document.getElementsByClassName('itemPrice') // Recupere tout les <p> contenant les prix
+  let totalPrice = 0 
+  let totalQuantity = 0
+  let i = 0
+for(let input of arrayQuantity){
+  totalQuantity += parseInt(input.value, 10)
+  totalPrice += (parseInt(input.value, 10) * parseInt(arrayPrice[i].innerHTML, 10))
+  i +=1
+}
+const totalQuantityContainer = document.getElementById("totalQuantity");
+const totalPriceContainer = document.getElementById("totalPrice")
+totalQuantityContainer.innerText = totalQuantity;
+totalPriceContainer.innerText = totalPrice;
+return totalPrice
 }
 
 /* E / Fonction qui n'a comme but uniquement de lancer un EventListener sur le boutton "commader"*/
@@ -182,9 +192,9 @@ checkDataFromForm()
 }
 
 /* F / Fonction permettant de trouver l'index d'un produit par rapport au localStorage.cartContent
-    @params {Array} item
-             <<{String} _id
-             <<{String} color
+    @params { Array } item
+             <<{ String } _id
+             <<{ String } color
              <<{Number} quantity
     @return {Number} index */
 function findIndexInCart(item) {
@@ -199,14 +209,14 @@ function findIndexInCart(item) {
 verifie la presence de caracteres potentiellement dangereux, lance une alerte le cas echeant, sinon
 deux objets seront crées (contact et products) puis envoyer en tant que parametre lkors de l'appel 
 de la fonction "sendOrderToApi()"
-    @return {Array} contact
-             <<{String} firstName       
-             <<{String} lastName       
-             <<{String} address       
-             <<{String} city       
-             <<{String} email  
-    @return {Array} productsIds
-             <<{String} _id */
+    @return { Array } contact
+             <<{ String } firstName       
+             <<{ String } lastName       
+             <<{ String } address       
+             <<{ String } city       
+             <<{ String } email  
+    @return { Array } productsIds
+             <<{ String } _id */
 function checkDataFromForm() {
   let contact = {};
   let productsIds = [];
@@ -252,17 +262,17 @@ function checkDataFromForm() {
 /* H / Fonction permettant la creation de l'objet "order" a partir des objets transmis en parametre
 puis les envoie une requete POST a l'api qui renvoie l'objet, mais egalement orderId et appelle la 
 fonction switchViewToConfirm()
-    @params {Array} contact
-             <<{String} firstName       
-             <<{String} lastName       
-             <<{String} address       
-             <<{String} city       
-             <<{String} email  
-    @params {Array} productsIds
-             <<{String} _id
-    @return {Array} contact
-    @return {Array} productsIds
-    @return {String} orderId
+    @params { Array } contact
+             <<{ String } firstName       
+             <<{ String } lastName       
+             <<{ String } address       
+             <<{ String } city       
+             <<{ String } email  
+    @params { Array } productsIds
+             <<{ String } _id
+    @return { Array } contact
+    @return { Array } productsIds
+    @return { String } orderId
 */
     
 function sendOrderToApi(prod, contact) {
@@ -297,7 +307,7 @@ let products = prod
 
 /* I - 1 / Fonction qui permet d'ouvrire un nouvel onglet en passant le parametre d'entrée en tant que
 params de l'URL et appel la fonction displayConfirmationCode() 
-    @params {String} orderId*/
+    @params { String } orderId*/
 
 function switchViewToConfirm(orderId){
 /*   window.location.replace("./confirmation.html?orderId="+ orderId) */
