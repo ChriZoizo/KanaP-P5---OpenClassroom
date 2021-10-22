@@ -1,16 +1,13 @@
 // Variable ????
-const keyForProductInCart = "cartContent";
-const currentUrlInString = document.location.href; // URL actuelle en string
+const currentUrlInString = document.location.href; // Enregistrement URL actuelle
 const currentURL = new URL(currentUrlInString); // Creation d'une nouvelle URL format URL
 const id = currentURL.searchParams.get("id"); // Initialisation d'une variablke a partir du "params" ID
 
 // Initialisation des variable/Constantes/...
 const apiURL = "http://localhost:3000/api/products/";
-/* let cart = []; */
-productInfoArray = []; // Nouvel array qui contiendra les infos du produits a afficher
+productInfoArray = []; // Nouvel array qui contiendra les infos du produits a afficher apres le ftech
 
 getProductFromApi(apiURL+id);
-
 
 // Fonction de recuperation du contenus de l'API
 async function getProductFromApi(url) {
@@ -30,7 +27,7 @@ async function getProductFromApi(url) {
       return value
     })
     .catch(function (err) {
-      console.log("FETCHING Erreur !");
+      console.log("ERREUR DE L'APP.");
       console.log(err);
       return err;
     });
@@ -40,7 +37,6 @@ async function getProductFromApi(url) {
 function displayOneProduct(object) {
   const imageContainer = document.getElementsByClassName("item__img"); // QUERYSELECTOR ??
   let productImg = document.createElement("img");
-  console.log("Take IMAGE URL");
   productImg.setAttribute("src", object.imageUrl);
   productImg.setAttribute("alt", object.altTxt);
   imageContainer[0].appendChild(productImg);
@@ -81,6 +77,7 @@ function collectDataForCart() {
     productToAdd["quantity"] = parseInt(quantityForm);
     return productToAdd;
   }
+
 }
 
 // Fonction pour verifier la presence d'un panier existant dans le localStorage : 
@@ -103,16 +100,10 @@ function collectDataFromCart() {
 // Sinon une nouvelle entrée est créer
 function addToCart() {
   let productToAdd = collectDataForCart();
-  console.log("Array du nouveau produit ");
-  console.log(productToAdd);
   let arrayOfCartedProducts = collectDataFromCart();
-  console.log("addToCart retour de la fontion takeInfoFromCart ");
-  console.log(arrayOfCartedProducts);
-
   let indexeur = 0;
   let alreadyPresent = false;
   arrayOfCartedProducts.forEach(function (element) {
-    console.log(element);
     if (
       element._id == productToAdd._id &&
       element.color == productToAdd.color
@@ -124,17 +115,21 @@ function addToCart() {
     indexeur += 1;
   });
   if (alreadyPresent == false) {
-    console.log("CHECKER");
     arrayOfCartedProducts.push(productToAdd);
   }
-
-  console.log(arrayOfCartedProducts);
   localStorage.setItem("cartContent", JSON.stringify(arrayOfCartedProducts));
-  console.log(productToAdd);
-  let test = JSON.parse(localStorage.getItem("cartContent"));
-  console.log(test);
+  location.reload()
 }
 
 // Event Listener sur le bouton  addToCart pour l'ajout au panier
 let addToCartButton = document.getElementById("addToCart");
-addToCartButton.addEventListener("click", addToCart);
+addToCartButton.addEventListener("click", function(){
+  let confirm =  window.confirm("Confirmer ajout au panier ?")
+  if(confirm == true){
+    addToCart()
+  }
+  else if (confirm == false){
+    window.alert("Le produit n'as pas été ajouter au panier")
+    location.reload()
+  }
+});

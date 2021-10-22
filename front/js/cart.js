@@ -90,7 +90,7 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
 </div>\
 <div class="cart__item__content">\
   <div class="cart__item__content__titlePrice">\
-    <h2>${objectInfos.name}</h2>\
+    <h2>${objectInfos.name} (${objectFromCart.color})</h2>\
     <p class="itemPrice">${parseInt(objectInfos.price).toFixed(2)} €</p>\
   </div>\
   <div class="cart__item__content__settings">\
@@ -166,7 +166,7 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
 function displayTotalPriceAndQuantity() {
   const arrayQuantity = document.getElementsByClassName('itemQuantity') // Recupere tout les input de quantité
   const arrayPrice = document.getElementsByClassName('itemPrice') // Recupere tout les <p> contenant les prix
-  let totalPrice = 0 
+  let totalPrice = 0 // Declaration de la variable contenant le prix total
   let totalQuantity = 0
   let i = 0
 for(let input of arrayQuantity){
