@@ -1,8 +1,9 @@
-// Imports
+// ** / Imports
+import apiUrl from "./lib"
+// A / Variables
+const apiURL = apiUrl() //Declaration de l'URL de l'api via fonction importée
 const items = { ...localStorage };
 
-//Declaration de l'URL de l'api
-const apiURL = "http://localhost:3000/api/products/";
 // recuperation du contenus du localStorage
 let cartList = JSON.parse(localStorage.getItem("cartContent"));
 let urlChecker = window.location.pathname
