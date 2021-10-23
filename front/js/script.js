@@ -1,15 +1,14 @@
-// A / Variables
+// A / Variables Globales
 const apiURL = 'http://localhost:3000/api/products/' //Declaration de l'URL de l'api
 const currentURL = // Declaration d'une variable contenant l'URL actuelle
   window.location.protocol +
   '//' +
   window.location.host +
   window.location.pathname
-const productURLFirstPart = new URL(
+const productURLFirstPart = new URL(   // Creation de la base de l'url qui servira de liens produits
   currentURL.replace('index.html', 'product.html')
-) // Creation de la base de l'url qui servira au peuplé les liens des produits
+) 
 
-// CODE
 getProductsFromApi(apiURL) // appel de la fonction de fetch avec l'url de l'API en params
 
 /* B / Fonction permettant le fetch de l'api puis appel la fonction "populateIndexWithProducts()" 
@@ -20,18 +19,16 @@ function getProductsFromApi (url) {
   fetch(url)
     .then(function (res) {
       if (res.ok) {
-        console.log('Fetch Step 1 : res is OK')
+        console.log("API Res OK")
         return res.json()
       }
     })
     .then(function (value) {
-      console.log('Fetch Ok : Returning res')
-      console.log(value)
       populateIndexWithProducts(value)
       return value
     })
     .catch(function (err) {
-      console.log('ERROR WITH APP.')
+      console.log('ERROR WITH APP')
       console.log(err)
     })
 }
@@ -52,13 +49,17 @@ function populateIndexWithProducts (allProducts) {
 
     let newLink = document.createElement('a') // Creation <a>
     newLink.setAttribute('href', link)
+
     let newArticle = document.createElement('article') // Creation <article>
+
     let newImg = document.createElement('img') // Creation <img>
     newImg.setAttribute('src', object.imageUrl)
     newImg.setAttribute('alt', object.altTxt + ', ' + object.name)
+
     let newH3 = document.createElement('h3') // Creation <h3>
     newH3.setAttribute('class', 'productName')
     newH3.innerHTML = object.name
+
     let newP = document.createElement('p') // Creation <p>
     newP.setAttribute('class', 'productDescription')
     newP.innerText = object.description
