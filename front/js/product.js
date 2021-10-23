@@ -1,21 +1,22 @@
-// Variables
+/* A / Variables*/
 const currentUrlInString = document.location.href // Enregistrement URL actuelle
 const currentURL = new URL(currentUrlInString) // Creation d'une nouvelle URL format URL
 const id = currentURL.searchParams.get('id') // Initialisation d'une variablke a partir du "params" ID
 
-const apiURL = 'http://localhost:3000/api/products/'
-productInfoArray = [] // Nouvel array qui contiendra les infos du produits a afficher apres le ftech
+const apiURL = 'http://localhost:3000/api/products/' // URL de l'api
 
+productInfoArray = [] // Nouvel array qui contiendra les infos du produits a afficher apres le ftech
 // Appel de la premiere fonction en plaçant l'api de l'url + l'id du produit
 getProductFromApi(apiURL + id)
 
-// Fonction de recuperation du contenus de l'API
+/* B / Fonction permettant le fetch de l'api puis appel la fonction "displayOneProduct()" 
+en lui passant le resultat du fetch en parametre 
+  @params { String } url
+  @return { Array } value */
 async function getProductFromApi (url) {
   fetch(url)
     .then(function (res) {
       if (res.ok) {
-        console.log('FETCH Etape 1 : OK')
-        console.log(res)
         return res.json()
       }
     })
@@ -27,7 +28,6 @@ async function getProductFromApi (url) {
       return value
     })
     .catch(function (err) {
-      console.log("ERREUR DE L'APP.")
       console.log(err)
       return err
     })
@@ -35,7 +35,7 @@ async function getProductFromApi (url) {
 
 // Fonction pour afficher les informations du produit
 function displayOneProduct (object) {
-  const imageContainer = document.getElementsByClassName('item__img') // QUERYSELECTOR ??
+  const imageContainer = document.getElementsByClassName('item__img')
   let productImg = `<img src=${object.imageUrl} alt=${object.altTxt}></img>`
   imageContainer[0].innerHTML = productImg
   const h1Container = document.getElementById('title')

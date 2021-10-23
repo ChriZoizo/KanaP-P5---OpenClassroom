@@ -1,4 +1,4 @@
-// ** / Imports
+// ** / Imports TEST D'importation de variables
 import apiUrl from "./lib"
 // A / Variables
 const apiURL = apiUrl() //Declaration de l'URL de l'api via fonction importée
@@ -322,7 +322,6 @@ let products = prod
 
 
 function switchViewToConfirm(orderId){
-/*   window.location.replace("./confirmation.html?orderId="+ orderId) */
   window.open("./confirmation.html?orderId="+ orderId, '_blank')
   window.onload = function(){
   displayConfirmationCode()}
