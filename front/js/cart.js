@@ -273,7 +273,7 @@ function checkContactData (contact) {
   for (const [key, value] of Object.entries(contact)) {
     if (key == 'firstName' || key == 'lastName') {
       // Si le test est positif, affiche un message d'erreur
-      if (regExNamesChecker.test(value) === true) {
+      if (regExNamesChecker.test(value) === true || value.length == 0) {
         displayErrorDOM(key, true)
         errorCount += 1
         // Sinon appelle une fonction pour effacer un eventuel message injecter dans le DOM au préalable
@@ -282,11 +282,11 @@ function checkContactData (contact) {
       }
       // Bis Repetita pour les champs "city" "adress" et "email" avec un regEx different
     } else {
-      if (regExChecker.test(value) === true) {
-        displayErrorInForm(key, true)
+      if (regExChecker.test(value) === true || value.length == 0) {
+        displayErrorDOM(key, true)
         errorCount += 1
       } else {
-        displayErrorInForm(key, false)
+        displayErrorDOM(key, false)
       }
     }
   }
@@ -302,7 +302,7 @@ function checkContactData (contact) {
 /* G - 2 / Fonction qui affiche ou retire via le DOM les messages d'erreures du formulaires
 @param { String } badField
 @param { Boolean } validator */
-function displayErrorInForm (badField, validator) {
+function displayErrorDOM (badField, validator) {
   let dom = document.getElementById(`${badField}ErrorMsg`)
   let message = `Contenus du champ invalide ! Trop court ou présence de caractéres inattendus`
   // si le boleen "validator" est true, le message est ajouté, si il est sur false, le message est enlevé
