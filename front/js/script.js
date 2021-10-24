@@ -1,4 +1,3 @@
-// A / Variables Globales
 const apiURL = 'http://localhost:3000/api/products/' //Declaration de l'URL de l'api
 const currentURL = // Declaration d'une variable contenant l'URL actuelle
   window.location.protocol +
@@ -9,12 +8,18 @@ const productURLFirstPart = new URL(   // Creation de la base de l'url qui servi
   currentURL.replace('index.html', 'product.html')
 ) 
 
-getProductsFromApi(apiURL) // appel de la fonction de fetch avec l'url de l'API en params
+getProductsFromApi(apiURL) // appel de l'application (commence par le fetch de l'API)
 
-/* B / Fonction permettant le fetch de l'api puis appel la fonction "populateIndexWithProducts()" 
+/* A / Fonction permettant le fetch de l'api puis appel la fonction B 
 en lui passant le resultat du fetch en parametre 
-  @params { String } url
-  @return { Array } value */
+@params { String } url
+@return { Object } value
+         >> { Array } product
+         >> { String } _id
+         >> { String } name
+         >> { String } imageUrl
+         >> { String } altTxt
+         >> { String } description  */
 function getProductsFromApi (url) {
   fetch(url)
     .then(function (res) {
@@ -28,20 +33,19 @@ function getProductsFromApi (url) {
       return value
     })
     .catch(function (err) {
-      console.log('ERROR WITH APP')
       console.log(err)
     })
 }
 
-/* C / Fonction qui passe en revus les items de l'array passé en parametre et affiche certaines 
-informations les produits sur la page HTML en modifiant le DOM
-@params {Array} allProducts
-        >> { Array } product
-          >> { String } _id
-          >> { String } name
-          >> { String } imageUrl
-          >> { String } altTxt
-          >> { String } description */
+/* B / Fonction qui passe en revus les items de l'Objet passé en parametre et affiche certaines 
+informations des produits sur la page HTML via le DOM
+@params { Object } allProducts
+         >> { Array } product
+         >> { String } _id
+         >> { String } name
+         >> { String } imageUrl
+         >> { String } altTxt
+         >> { String } description */
 function populateIndexWithProducts (allProducts) {
   for (let object of allProducts) {
     let link = productURLFirstPart + '?id=' + object._id // Creation de l'url href du produits

@@ -1,3 +1,13 @@
+/*  les fichiers de ce dossier contiennent le meme code avec quelques partie differentes. 
+En effet, j'ai refactoriser mon code plusieurts fois pour le plaisir, Malgré l'oublie de garder ces alternatives,
+j'ai quand meme pensé a les garder a partir de mon peaufinage final
+
+Tout ce qui est lié au export/import a été supprimé (parce que je suis stupide XD)
+Les commentaires ne sont pas fini, ce sont des brouillons
+
+Juste pour le plaisir d'apprendre (ça se voit pas trop la, car il y a peu de differences)
+*/
+
 // ** / Imports TEST D'importation de variables
 import apiUrl from "./lib"
 // A / Variables
@@ -179,7 +189,7 @@ function populateWithCartProducts(objectInfos, objectFromCart) {
     if (confirm == true) {
       cartList.splice(index, 1);
       localStorage.setItem("cartContent", JSON.stringify(cartList));
-      location.reload();
+      newArticleItem.remove()
     } else if (confirm == false) {
     }
   }
@@ -324,13 +334,10 @@ let products = prod
 function switchViewToConfirm(orderId){
   window.open("./confirmation.html?orderId="+ orderId, '_blank')
   window.onload = function(){
-  displayConfirmationCode()}
+  displayConfirmationCode(orderId)}
 }
 
-function displayConfirmationCode(){
-  const currentURL = new URL(document.location.href); // Creation d'une nouvelle URL format URL
-const id = currentURL.searchParams.get("orderId"); // Initialisation d'une variablke a partir du "params" ID
-
+function displayConfirmationCode(orderId){
   let displayer = document.getElementById('orderId')
-  displayer.innerText = id
+  displayer.innerText = orderId
 }

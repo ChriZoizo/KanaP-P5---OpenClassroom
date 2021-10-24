@@ -1,18 +1,21 @@
-/* A / Variables*/
 const currentUrlInString = document.location.href // Enregistrement URL actuelle
 const currentURL = new URL(currentUrlInString) // Creation d'une nouvelle URL format URL
-const id = currentURL.searchParams.get('id') // Initialisation d'une variablke a partir du "params" ID
+const id = currentURL.searchParams.get('id') // ID du produit a afficher que l'on recupere dans le params de l'URL crée
 
 const apiURL = 'http://localhost:3000/api/products/' // URL de l'api
 
-productInfoArray = [] // Nouvel array qui contiendra les infos du produits a afficher apres le ftech
-// Appel de la premiere fonction en plaçant l'api de l'url + l'id du produit
-getProductFromApi(apiURL + id)
+getProductFromApi(apiURL + id) // Appel de l'application, en passant l'urlde l'API + l'id en parametre
 
-/* B / Fonction permettant le fetch de l'api puis appel la fonction "displayOneProduct()" 
-en lui passant le resultat du fetch en parametre 
-  @params { String } url
-  @return { Array } value */
+/* A / Fonction permettant le fetch de l'api. La presence du params "_id" dans l'URL  indique au controlleur
+de ne renvoyer que le produit correspondant a cet ID.  
+@params { String } url
+@return { Objet } value
+         <<{ array } colors
+         <<{ String } _id
+         <<{ String } name
+         <<{ Number } price
+         <<{ String } imageUrl
+         <<{ String } description */
 async function getProductFromApi (url) {
   fetch(url)
     .then(function (res) {
@@ -20,11 +23,9 @@ async function getProductFromApi (url) {
         return res.json()
       }
     })
-    // recuperation des infos du produits via son "_id"
-    // passe les infos en parametre lors de l'appel de la fonction d'affichage
+    // Appel la fonction d'affichage en passant l'Objet "product" a afficher en parametre
     .then(function (value) {
-      productInfoArray = value
-      displayOneProduct(productInfoArray)
+      displayOneProduct(value)
       return value
     })
     .catch(function (err) {
@@ -33,19 +34,32 @@ async function getProductFromApi (url) {
     })
 }
 
-// Fonction pour afficher les informations du produit
+/*  B / Fonction pour afficher les informations du produit via le DOM. 
+@param { Objet } object
+        <<{ Array } colors
+        <<{ String } _id
+        <<{ String } name
+        <<{ Number } price
+        <<{ String } imageUrl
+        <<{ String } description */
+
 function displayOneProduct (object) {
   const imageContainer = document.getElementsByClassName('item__img')
+
   let productImg = `<img src=${object.imageUrl} alt=${object.altTxt}></img>`
   imageContainer[0].innerHTML = productImg
+
   const h1Container = document.getElementById('title')
   h1Container.innerText = object.name
+
   const priceContainer = document.getElementById('price')
   priceContainer.innerText = object.price
+
   const descriptionContainer = document.getElementById('description')
   descriptionContainer.innerText = object.description
+
   const colorSelector = document.getElementById('colors')
-  // Boucle sur l'element array "colors" contenant les couleurs pour les afficher dans le selecteur
+  // Boucle sur l'array "colors" contenant les couleurs du produits pour incure dans <select>
   for (i = 0; i < object.colors.length; i++) {
     let thisColor = object.colors[i]
     let colorOption = `<option value=${thisColor}>${thisColor}</option>`
@@ -53,13 +67,16 @@ function displayOneProduct (object) {
   }
 }
 
-// Fonction pour recuperer les informations de quantité et de couleur ainsi que l'ID
-// et retourne un array. Si il manque une info, retourne une alert()
-function collectDataForCart () {
+/* C / Fonction qui recupere les informations de quantité et de couleur ainsi que l'ID
+et retourne un Objet. Si il manque une info, retourne une alert() personnalisé
+@return { Object } productToAdd
+         << { String } _id 
+         << { String } color
+         << { Number } quantity*/
+function createObjectToCart () {
   let productToAdd = {}
   let colorSelector = document.getElementById('colors')
   let quantityForm = document.getElementById('quantity').value
-
   let selectedColor = colorSelector.options[colorSelector.selectedIndex].value
   if (selectedColor == '' && quantityForm == 0) {
     alert('Veuillez choisir une couleur et definir une quantitée')
@@ -68,61 +85,64 @@ function collectDataForCart () {
   } else if (selectedColor == '') {
     alert('Veuiller choisir une couleur')
   } else {
-    productToAdd['_id'] = productInfoArray._id
+    productToAdd['_id'] = id
     productToAdd['color'] = selectedColor
     productToAdd['quantity'] = parseInt(quantityForm)
     return productToAdd
   }
 }
 
-// Fonction pour verifier la presence d'un panier existant dans le localStorage :
-// renvoie le panier sous forme d'array si il existe deja.
-// Creer une array vide si le panier n'est pas existant
-function collectDataFromCart () {
-  let cartContent = { ...localStorage }
-  if (cartContent.cartContent != null || cartContent.cartContent != undefined) {
-    array = JSON.parse(localStorage.getItem('cartContent'))
-    return array
+/* D / Fonction pour verifier la presence d'un panier existant dans le localStorage.cartContent :
+ renvoie le panier sous forme d'Objet si il existe deja.
+ Creer une Objet vide si le panier n'est pas existant 
+ @return { Object } cart
+          << { Object } product
+              << { String } product._id
+              << { String } product.color
+              << { Number } product.quantity
+or
+@return { Object } emptyCart ** EMPTY ***/
+function createCartObject () {
+  let storage = { ...localStorage } // Variable contenant le localStorage
+  if (storage.cartContent != null || storage.cartContent != undefined) {
+    cart = JSON.parse(localStorage.getItem('cartContent'))
+    return cart
   } else {
-    array = new Array()
-    return array
+    emptyCart = new Object()
+    return emptyCart
   }
 }
 
-// Function qui verifie le contenus de l'array qui contient les produits du panier:
-// Si un produit identique au produit a ajouter est deja present, on modifie la quantité de l'objet
-// Sinon une nouvelle entrée est créer
+/* E / Function qui verifie l'Objet panier' via l'ID (_id):
+ Si un Objet "product" identique au produit a ajouter est deja present, on modifie la quantité de l'objet
+ Sinon un nouvel Objet "product" est ajouté a l'Objet panier  */
 function addToCart () {
-  let productToAdd = collectDataForCart()
-  let arrayOfCartedProducts = collectDataFromCart()
-  let indexeur = 0
+  let productToAdd = createObjectToCart() // Objet product a ajouter
+  let cart = createCartObject() // Objet panier
+  let indexeur = 0            
   let alreadyPresent = false
-  arrayOfCartedProducts.forEach(function (element) {
+  cart.forEach(function (cartedProduct) {
+    // si les IDs et la couleur correspond, les quantités son additionnées et alreadyPresent passe a "true"
     if (
-      element._id == productToAdd._id &&
-      element.color == productToAdd.color
+      cartedProduct._id == productToAdd._id &&
+      cartedProduct.color == productToAdd.color
     ) {
-      productToAdd.quantity += element.quantity
-      arrayOfCartedProducts.splice(indexeur, 1, productToAdd)
-      alreadyPresent = true
+      productToAdd.quantity += cartedProduct.quantity
+      cart.splice(indexeur, 1, productToAdd)
+      alreadyPresent = true 
     }
     indexeur += 1
   })
+  // A la fin de la boucle, si le booleen est toujours a false, on ajoute l'objet product tel quel dans l'Objet panier
   if (alreadyPresent == false) {
-    arrayOfCartedProducts.push(productToAdd)
+    cart.push(productToAdd)
   }
-  localStorage.setItem('cartContent', JSON.stringify(arrayOfCartedProducts))
+  localStorage.setItem('cartContent', JSON.stringify(cart))
   location.reload()
 }
 
-// Event Listener sur le bouton  addToCart pour l'ajout au panier
+/* eventListener sur le bouton  addToCart pour l'ajout au panier. */
 let addToCartButton = document.getElementById('addToCart')
 addToCartButton.addEventListener('click', function () {
-  let confirm = window.confirm('Confirmer ajout au panier ?')
-  if (confirm == true) {
     addToCart()
-  } else if (confirm == false) {
-    window.alert("Le produit n'as pas été ajouter au panier")
-    location.reload()
-  }
 })
