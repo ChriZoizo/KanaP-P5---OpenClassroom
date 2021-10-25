@@ -7,20 +7,20 @@ Les commentaires ne sont pas fini, ce sont des brouillons
 
 Juste pour le plaisir d'apprendre (ça se voit pas trop la, car il y a peu de differences)
 */
-
+console.log('#############################################')
 // ** / Imports TEST D'importation de variables
-import apiUrl from "./lib"
+import apiUrl, { Product, ObjectFromApi } from "./lib"
 // A / Variables
 const apiURL = apiUrl() //Declaration de l'URL de l'api via fonction importée
 const items = { ...localStorage };
-
+console.log('#############################################')
 // recuperation du contenus du localStorage
 let cartList = JSON.parse(localStorage.getItem("cartContent"));
 let urlChecker = window.location.pathname
 let cartHTML = /cart.html/
 let confirmationHTML = /confirmation.html/
 if (cartHTML.test(urlChecker) == true){
-loader(apiURL);
+productsOfApi = new ObjectFromApi;
 listenOrderButton()
 }
 else if (confirmationHTML.test(urlChecker) == true){
@@ -69,7 +69,7 @@ et recuperer les information dans l'array allProducts qui contient toute l'API
 @return { Number } product.quantity
 @return { Object } productInfos
 */
-function loopOverCartList(allProducts) {
+export default function loopOverCartList(allProducts) {
   let totalQuantityOfProducts = 0;
   let totalCartPrice = 0;
   cartList.forEach(function (product) {
@@ -84,7 +84,7 @@ function loopOverCartList(allProducts) {
 }
 
 // Fonction pour affficher les information des produits du paniers ainsi que les infos necessaires correspondant au produit dans l'API
-function populateWithCartProducts(objectInfos, objectFromCart) {
+export function populateWithCartProducts(objectInfos, objectFromCart) {
   // ALTERNATIVE INNERHTML !!!!!
   const articleContainer = document.getElementById("cart__items");
 

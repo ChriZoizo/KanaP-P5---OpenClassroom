@@ -8,7 +8,7 @@ Les commentaires ne sont pas fini, ce sont des brouillons
 Juste pour le plaisir d'apprendre (ça se voit pas trop la, car il y a peu de differences)
 */
 // Imports
-import apiUrl from "./lib"
+import apiUrl from './lib'
 // A / Variables
 const apiURL = apiUrl() //Declaration de l'URL de l'api
 const currentURL = // Declaration d'une variable contenant l'URL actuelle
@@ -19,7 +19,6 @@ const currentURL = // Declaration d'une variable contenant l'URL actuelle
 const productURLFirstPart = new URL(
   currentURL.replace('index.html', 'product.html')
 ) // Creation de la base de l'url qui servira au peuplé les liens des produits
-
 
 // CODE
 getProductsFromApi(apiURL) // appel de la fonction de fetch avec l'url de l'API en params

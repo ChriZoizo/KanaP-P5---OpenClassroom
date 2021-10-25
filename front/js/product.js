@@ -41,6 +41,7 @@ async function getProductFromApi (url) {
         <<{ String } name
         <<{ Number } price
         <<{ String } imageUrl
+        << {String } altTxt
         <<{ String } description */
 
 function displayOneProduct (object) {
