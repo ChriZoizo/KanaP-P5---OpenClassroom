@@ -23,7 +23,7 @@ async function getProductFromApi (url) {
         return res.json()
       }
     })
-    // Appel la fonction d'affichage en passant l'Objet "product" a afficher en parametre
+    // Si ok, appel la fonction d'affichage en passant l'Objet "product" en parametre
     .then(function (value) {
       displayOneProduct(value)
       return value
@@ -34,14 +34,13 @@ async function getProductFromApi (url) {
     })
 }
 
-/*  B / Fonction pour afficher les informations du produit via le DOM. 
+/*  B / Fonction pour afficher les informations en modifiant le DOM. 
 @param { Objet } object
         <<{ Array } colors
         <<{ String } _id
         <<{ String } name
         <<{ Number } price
         <<{ String } imageUrl
-        << {String } altTxt
         <<{ String } description */
 
 function displayOneProduct (object) {
@@ -102,25 +101,25 @@ function createObjectToCart () {
               << { String } product.color
               << { Number } product.quantity
 or
-@return { Object } emptyCart ** EMPTY ***/
+@return { Array } emptyCart ** EMPTY ***/
 function createCartObject () {
   let storage = { ...localStorage } // Variable contenant le localStorage
   if (storage.cartContent != null || storage.cartContent != undefined) {
     cart = JSON.parse(localStorage.getItem('cartContent'))
     return cart
   } else {
-    emptyCart = new Object()
+    emptyCart = []
     return emptyCart
   }
 }
 
-/* E / Function qui verifie l'Objet panier' via l'ID (_id):
- Si un Objet "product" identique au produit a ajouter est deja present, on modifie la quantité de l'objet
+/* E / Function qui parcours l'Objet panier' :
+ Si un Objet "product" identique au produit a ajouter est deja present, on modifie la quantité de l'objet voulus
  Sinon un nouvel Objet "product" est ajouté a l'Objet panier  */
 function addToCart () {
   let productToAdd = createObjectToCart() // Objet product a ajouter
   let cart = createCartObject() // Objet panier
-  let indexeur = 0            
+  let indexeur = 0 // Indexeur qui serviras lors du splice()
   let alreadyPresent = false
   cart.forEach(function (cartedProduct) {
     // si les IDs et la couleur correspond, les quantités son additionnées et alreadyPresent passe a "true"
@@ -130,7 +129,7 @@ function addToCart () {
     ) {
       productToAdd.quantity += cartedProduct.quantity
       cart.splice(indexeur, 1, productToAdd)
-      alreadyPresent = true 
+      alreadyPresent = true // Passe le booleen a true
     }
     indexeur += 1
   })
@@ -142,8 +141,8 @@ function addToCart () {
   location.reload()
 }
 
-/* eventListener sur le bouton  addToCart pour l'ajout au panier. */
+/* eventListener sur le bouton  d'ajout au panier. */
 let addToCartButton = document.getElementById('addToCart')
 addToCartButton.addEventListener('click', function () {
-    addToCart()
+  addToCart()
 })

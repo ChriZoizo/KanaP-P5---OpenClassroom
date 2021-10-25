@@ -1,10 +1,12 @@
 const apiURL = 'http://localhost:3000/api/products/' // URL de l'api
-let cartList = JSON.parse(localStorage.getItem('cartContent')) // Objet panier (recuperer du localStorage.cartContent)
+let cartList = JSON.parse(localStorage.getItem('cartContent')) // Objet panier (localStorage.cartContent)
 let urlChecker = window.location.pathname // URL actuelle
-let cartHTML = /cart.html/ // RegExs qui permettrons de tester l'url afin de savoir quel fichier a appeler ce code
+let cartHTML = /cart.html/ // RegExs qui permettrons de tester l'url afin de savoir quel fichier HTML a appellé ce code
 let confirmationHTML = /confirmation.html/
 
-// Determine la fonction a appeler en fonction du fichier HTML qui appelle ce fichier (cart.html ou confirmation.html)
+/*  Determine la fonction a appeler en fonction du fichier HTML qui appelle ce fichier (cart.html ou confirmation.html)
+Si cart.html >> Fonction A puis E
+Si confirmation >> fonction I - 2 */
 if (cartHTML.test(urlChecker) == true) {
   fetchAndStart(apiURL)
   listenOrderButton()
@@ -38,9 +40,9 @@ function fetchAndStart (url) {
     })
 }
 
-/* B / Fonction qui parcours l'Objet panier, si null ou vide, change le H1 de la page.
-Sinon, l'_id de chaques elements de l'Objet panier permet de recuperer dans l'Objet de l'API les infos
-image, nom, etc... Puis appel la fonction d'affichage avec les infos (Objet) en parametres
+/* B / Fonction qui parcours l'Objet panier. Si null ou vide, change le H1 de la page.
+Sinon, recupere dans les Objets de l'API les produits du panier image, nom, etc... 
+A chaque concordance, appel la fonction d'affichage avec les deux objets en parametres
 @param { Objet } arrayFromApi      
 @return { Objet } productOfCart
         <<{ String } productOfCart._id
@@ -59,13 +61,13 @@ function loopOverCartList (arrayFromApi) {
     document.getElementsByTagName('h1')[0].innerText = 'Votre Panier Est Vide'
   } else {
     cartList.forEach(function (productOfCart) {
-      // variable qui recevras l'Objet product contenus dans l'Objet de l'api [...]
       let productInfos = arrayFromApi.find(
-        element => element._id == productOfCart._id //  [...] ayant le même _id.
+        // Cherche l'Objet dans l'API ayant le meme _id et l'enregistre dans productInfos
+        element => element._id == productOfCart._id
       )
       populateWithCartProducts(productInfos, productOfCart)
     })
-    displayTotalPriceQuantity() // Appel la fonction qui calcule le total du panier
+    displayTotalPriceQuantity() // fonction qui calcule et affiche le total du panier
   }
 }
 
@@ -84,6 +86,7 @@ l'Objet product du panier en parametre.
         <<{ String } objectInfos.description */
 function populateWithCartProducts (objectInfos, objectFromCart) {
   // template de code HTML en interpolant les variable voulus
+  // Des ID personnalisé sont crées pour facilité le ciblage (quantité et prix)
   let htmlOfProduct = `<div class="cart__item__img">\  
   <img src="${objectInfos.imageUrl}" alt="${objectInfos.altTxt}">\
 </div>\
@@ -121,7 +124,7 @@ function populateWithCartProducts (objectInfos, objectFromCart) {
   articleContainer.appendChild(newArticleItemInner) // Injection du template
   newArticleItemInner.innerHTML = htmlOfProduct
 
-/* C - 1 / AJOUT ADDEVENTLISTENER
+  /* C - 1 / AJOUT ADDEVENTLISTENER
 C - 1 - a / addEventListener bouton supprimer (affilié a son product)*/
   document
     .getElementById(`delete ${objectInfos._id} ${objectFromCart.color}`)
@@ -129,7 +132,7 @@ C - 1 - a / addEventListener bouton supprimer (affilié a son product)*/
       deleteItem(objectFromCart)
     })
 
-/* C - 1 - b / addEventListener input quantité (affilié a son product)*/
+  /* C - 1 - b / addEventListener input quantité (affilié a son product)*/
   document
     .getElementById(`input ${objectInfos._id} ${objectFromCart.color}`)
     .addEventListener('change', function () {
@@ -147,7 +150,7 @@ C - 1 - a / addEventListener bouton supprimer (affilié a son product)*/
       }
     })
 
-/* C - 2 FONCTIONS A PORTéE REDUITE
+  /* C - 2 FONCTIONS A PORTéE REDUITE
  C - 2 - a / Fonction pour supprimer l'objet
 @params { Object } object */
   function deleteItem (object) {
@@ -161,26 +164,26 @@ C - 1 - a / addEventListener bouton supprimer (affilié a son product)*/
       cartList.splice(index, 1) // supprime l'objet de l'array
       localStorage.setItem('cartContent', JSON.stringify(cartList)) // enregistre l'array dans le localStorage
       newArticleItemInner.remove() // Supprime du DOM
+      displayTotalPriceQuantity() // 
     }
   }
 
-/* C - 2 - b / Fonction pour enregistrer les changement de quantité d'un produit dans le localStorage
-et modifie la quantité affiché sur la page
+  /* C - 2 - b / Fonction pour enregistrer les changement de quantité d'un produit dans le panier
 @params {Number} quantity
 @var    {Number} index */
   function changeQuantityInner (quantity) {
     index = findIndexInCart(objectFromCart) // Recupere l'index via la fonction findIndexInCart()
-    objectFromCart.quantity = quantity
-    cartList.splice(index, 1, objectFromCart)
-    localStorage.setItem('cartContent', JSON.stringify(cartList))
+    objectFromCart.quantity = quantity // Changer la quantité dans l'Objet product
+    cartList.splice(index, 1, objectFromCart) // enregistrement  dans l'Objet panier 
+    localStorage.setItem('cartContent', JSON.stringify(cartList)) // enregistrement du panier dans localStorage
     document.getElementById(
       `displayQty ${objectInfos._id} ${objectFromCart.color}`
-    ).innerText = `Qté : ${quantity}`
-    displayTotalPriceQuantity()
+    ).innerText = `Qté : ${quantity}` // Changement quantité affiché
+    displayTotalPriceQuantity() // Met a jour prix et quantité du panier
   }
 }
 
-/* D / Fonction qui recupere le prix total et la quantité total du panier. 
+/* D / Fonction qui recupere le prix total ainsi que la quantité total du panier et l'affiche via le DOM. 
 @return { Number } totalPrice */
 function displayTotalPriceQuantity () {
   const arrayQuantity = document.getElementsByClassName('itemQuantity') // Recupere tout les input de quantité
@@ -189,6 +192,7 @@ function displayTotalPriceQuantity () {
   let totalQuantity = 0 // Declaration variable quantité total
   let i = 0 // Index utilisé pour parcourir les array de noeuds
   for (let input of arrayQuantity) {
+    // Calcul
     totalQuantity += parseInt(input.value, 10)
     totalPrice +=
       parseInt(input.value, 10) * parseInt(arrayPrice[i].innerHTML, 10)
@@ -206,12 +210,12 @@ l'Objet panier est vide ou null*/
 function listenOrderButton () {
   let orderButton = document.getElementById('order')
   orderButton.addEventListener('click', function (event) {
+    event.preventDefault()
     if (cartList === null || cartList.length == 0) {
-      event.preventDefault()
       window.alert('Panier Vide ! Impossible de passer une commande')
       return
     }
-    recordDataFromForm()
+    recordDataFromForm() // Si confirmation OK, enreegistre les donnée dans un objet avec la fonction G
   })
 }
 
@@ -294,12 +298,12 @@ function checkContactData (contact) {
   }
 }
 
-/* G - 2 / Fonction qui affiche ou retire via le DOM les messages d'erreures du formulaires
+/* G - 2 / Fonction qui affiche ou retire via le DOM les messages d'erreures autour du formulaire
 @param { String } badField
 @param { Boolean } validator */
 function displayErrorDOM (badField, validator) {
   let dom = document.getElementById(`${badField}ErrorMsg`)
-  let message = `Contenus du champ invalide ! Trop court ou présence de caractéres inattendus`
+  let message = `Contenus du champ invalide ! Champs vide ou présence de caractéres inattendus`
   // si le boleen "validator" est true, le message est ajouté, si il est sur false, le message est enlevé
   if (validator === true) {
     dom.innerText = message
@@ -351,7 +355,7 @@ function sendOrderToApi (prod, contact) {
 
 /* *** Fonctions pour le fichier "confirmation.html" UNIQUEMENT *** */
 
-/* I - 1 / Fonction qui ouvre un nouvel onglet, ajoute en params de l'URL de l'onget le string reçus en paramétre.
+/* I - 1 / Fonction qui ouvre la page confirmation.html avec le params "orderId" dans l'URL
 Puis appelle la fonction displayConfirmationCode() 
     @params { String } orderId*/
 function switchViewToConfirm (orderId) {
@@ -361,12 +365,10 @@ function switchViewToConfirm (orderId) {
   }
 }
 
-/* I - 2 / Fonction qui affiche l'orderId via le DOM sur la page "confirmation.html" en la 
-recuperant dans l'URL (params).  */
+/* I - 2 / Fonction qui affiche l'orderId via le DOM sur la page "confirmation.html".  orderID recuperé dans les params de l'url */
 function displayConfirmationCode () {
-  const currentURL = new URL(document.location.href) 
+  const currentURL = new URL(document.location.href)
   document.getElementById('orderId').innerText = currentURL.searchParams.get(
     'orderId'
   )
 }
-

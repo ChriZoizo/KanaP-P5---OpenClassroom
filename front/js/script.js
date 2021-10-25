@@ -7,14 +7,7 @@ const currentURL = // Declaration d'une variable contenant l'URL actuelle
 const productURLFirstPart = new URL(   // Creation de la base de l'url qui servira de liens produits
   currentURL.replace('index.html', 'product.html')
 ) 
-var keys='z';
-window.addEventListener('keydownf', function(e) {
-keys += e.key
-console.log(keys)
-}
-, 1000)
-;
-console.log(keys)
+
 getProductsFromApi(apiURL) // appel de l'application (commence par le fetch de l'API)
 
 /* A / Fonction permettant le fetch de l'api puis appel la fonction B 
