@@ -100,7 +100,7 @@ function createObjectToCart () {
               << { String } product._id
               << { String } product.color
               << { Number } product.quantity
-or
+OR
 @return { Array } emptyCart ** EMPTY ***/
 function createCartObject () {
   let storage = { ...localStorage } // Variable contenant le localStorage

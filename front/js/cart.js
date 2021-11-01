@@ -164,7 +164,7 @@ C - 1 - a / addEventListener bouton supprimer (affilié a son product)*/
       cartList.splice(index, 1) // supprime l'objet de l'array
       localStorage.setItem('cartContent', JSON.stringify(cartList)) // enregistre l'array dans le localStorage
       newArticleItemInner.remove() // Supprime du DOM
-      displayTotalPriceQuantity() // 
+      displayTotalPriceQuantity() //
     }
   }
 
@@ -174,7 +174,7 @@ C - 1 - a / addEventListener bouton supprimer (affilié a son product)*/
   function changeQuantityInner (quantity) {
     index = findIndexInCart(objectFromCart) // Recupere l'index via la fonction findIndexInCart()
     objectFromCart.quantity = quantity // Changer la quantité dans l'Objet product
-    cartList.splice(index, 1, objectFromCart) // enregistrement  dans l'Objet panier 
+    cartList.splice(index, 1, objectFromCart) // enregistrement  dans l'Objet panier
     localStorage.setItem('cartContent', JSON.stringify(cartList)) // enregistrement du panier dans localStorage
     document.getElementById(
       `displayQty ${objectInfos._id} ${objectFromCart.color}`
@@ -355,7 +355,7 @@ function sendOrderToApi (prod, contact) {
 
 /* *** Fonctions pour le fichier "confirmation.html" UNIQUEMENT *** */
 
-/* I - 1 / Fonction qui ouvre la page confirmation.html avec le params "orderId" dans l'URL
+/* I - 1 / Fonction qui ouvre un nouvel onglet, ajoute en params de l'URL de l'onget le string reçus en paramétre.
 Puis appelle la fonction displayConfirmationCode() 
     @params { String } orderId*/
 function switchViewToConfirm (orderId) {

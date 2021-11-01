@@ -5,8 +5,7 @@ j'ai quand meme pensé a les garder a partir de mon peaufinage final
 Tout ce qui est lié au export/import a été supprimé (parce que je suis stupide XD)
 Les commentaires ne sont pas fini, ce sont des brouillons
 
-Juste pour le plaisir d'apprendre (ça se voit pas trop la, car il y a peu de differences)
-*/
+Juste pour le plaisir d'apprendre (ça se voit pas trop la, car il y a peu de differences)*/
 
 export default function apiUrl () {
   return 'http://localhost:3000/api/products/'

@@ -37,7 +37,7 @@ function getProductsFromApi (url) {
     })
 }
 
-/* B / Fonction qui passe en revus les items de l'Objet passé en parametre et affiche certaines 
+/* B / Fonction qui passe en revus les items de l'Objet API passé en parametre et affiche certaines 
 informations des produits sur la page HTML via le DOM
 @params { Object } allProducts
          >> { Array } product
