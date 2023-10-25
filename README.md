@@ -1,6 +1,8 @@
 # Kanap #
 
-This is the front end and back end server for Project 5 of the Web Developer path. << Je confirme >>
+New ReadMe  Soon, please be patient
+
+This is the front end and back end server for Project 5 of the Web Developer path.
 
 ### Back end Prerequisites ###
 
